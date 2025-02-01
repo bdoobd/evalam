@@ -1,6 +1,12 @@
 from typing import Annotated
 from sqlalchemy import Integer
-from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column
+from sqlalchemy.orm import (
+    DeclarativeBase,
+    declared_attr,
+    Mapped,
+    mapped_column,
+    class_mapper,
+)
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 
 from app.config import settings
@@ -21,6 +27,16 @@ class Base(AsyncAttrs, DeclarativeBase):
     @declared_attr.directive
     def __tablename__(cls) -> str:
         return f"{cls.__name__.lower()}s"
+
+    def to_dict(self) -> dict:
+        columns = class_mapper(self.__class__).columns
+
+        return {column.key: getattr(self, column.key) for column in columns}
+        # return {
+        #     key: value
+        #     for key, value in self.__dict__.items()
+        #     if not key.startswith("_")
+        # }
 
 
 def connection(method):

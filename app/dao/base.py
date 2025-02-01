@@ -2,6 +2,7 @@ from typing import Any, Dict, List
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import select
 
 
 class BaseDAO:
@@ -30,3 +31,26 @@ class BaseDAO:
             raise e
 
         return new_instances
+
+    @classmethod
+    async def find_all(cls, session: AsyncSession, **filter_by):
+        query = select(cls.model).filter_by(**filter_by)
+
+        result = await session.execute(query)
+        records = result.scalars().all()
+
+        return records
+
+        # query = session.query(cls.model)
+        # return await query.all()
+
+    @classmethod
+    async def find_one_or_none_by_id(cls, session: AsyncSession, **filter_by):
+        query = select(cls.model).filter_by(**filter_by)
+
+        # print(query)
+
+        result = await session.execute(query)
+        record = result.scalar_one_or_none()
+
+        return record
