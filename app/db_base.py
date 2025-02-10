@@ -17,6 +17,7 @@ async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
 str_req = Annotated[str, mapped_column(nullable=False)]
 str_req_uq = Annotated[str, mapped_column(nullable=False, unique=True)]
+str_opt = Annotated[str, mapped_column(nullable=True)]
 
 
 class Base(AsyncAttrs, DeclarativeBase):

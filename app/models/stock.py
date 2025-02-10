@@ -10,12 +10,10 @@ from app.models.item import Item
 
 class Stock(Base):
     reference: Mapped[str_req_uq]
-    date_in: Mapped[datetime] = mapped_column(
+    date: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.now
     )
-    sender: Mapped[str_req]
-    closed: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-
+    consignor: Mapped[str_req]
     note: Mapped[str | None]
 
     items: Mapped[list["Item"]] = relationship(
