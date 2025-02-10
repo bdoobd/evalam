@@ -6,7 +6,7 @@ from app.dao.base import BaseDAO
 from app.models.stock import Stock
 from app.models.item import Item
 from app.db_base import connection
-from app.schemas.stock import StockData, StockRef
+from app.schemas.stock import StockData
 from app.schemas.item import ItemAddWithID
 
 
@@ -22,7 +22,7 @@ class StockDAO(BaseDAO):
 
         print(f"New stock added: {new_stock.id}")
 
-        return new_stock.id
+        return new_stock
 
     @connection
     async def get_all_stocks(session: AsyncSession):

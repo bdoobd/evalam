@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends
 
 from app.dao.stock import StockDAO
-from app.schemas.stock import StockAdd, Stock, StockRef, StockData
+from app.schemas.stock import StockAdd, StockWithID, StockData
 
 router = APIRouter(prefix="/stock", tags=["Stock"])
 
 
 @router.post("/add_stock", summary="Add stock")
-async def new_stock(stock: StockAdd = Depends()) -> dict:
+async def new_stock(stock: StockAdd = Depends()) -> StockWithID:
     stock = await StockDAO.add_one(stock.model_dump())
 
     return {"message": "Stock added", "Stock ID": stock}
@@ -23,7 +23,7 @@ async def get_all_stock():
 
 
 @router.get("/get_refs", summary="Get all stock references")
-async def get_all_stock_refs() -> list[StockRef]:
+async def get_all_stock_refs() -> list[StockWithID]:
     refs = await StockDAO.stock_refs()
 
     return refs
