@@ -4,6 +4,7 @@ from sqlalchemy import DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db_base import Base, str_req, str_req_uq
+from app.models.invoice import Invoice
 
 
 class Load(Base):

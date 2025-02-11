@@ -7,10 +7,11 @@ router = APIRouter(prefix="/stock", tags=["Stock"])
 
 
 @router.post("/add_stock", summary="Add stock")
-async def new_stock(stock: StockAdd = Depends()) -> StockWithID:
-    stock = await StockDAO.add_one(stock.model_dump())
+# async def new_stock(stock: StockAdd = Depends()) -> StockWithID:
+async def new_stock(stock: StockAdd = Depends()):
+    result = await StockDAO.add_one(stock.model_dump(exclude_unset=True))
 
-    return {"message": "Stock added", "Stock ID": stock}
+    return {"message": "Stock added", "Stock ID": result}
 
 
 @router.get("/get_all", summary="Get all stock")

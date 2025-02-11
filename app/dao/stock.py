@@ -16,11 +16,9 @@ class StockDAO(BaseDAO):
     @connection
     async def add_one(stock_data: dict, session: AsyncSession):
 
-        # stock_data["date_in"] = datetime.strptime(stock_data["date_in"], "%Y-%m-%d")
+        # stock_data["date"] = datetime.strptime(stock_data["date_in"], "%Y-%m-%d")
 
         new_stock = await StockDAO.add(session=session, **stock_data)
-
-        print(f"New stock added: {new_stock.id}")
 
         return new_stock
 

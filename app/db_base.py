@@ -25,7 +25,7 @@ class Base(AsyncAttrs, DeclarativeBase):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
 
-    @declared_attr.directive
+    @declared_attr
     def __tablename__(cls) -> str:
         return f"{cls.__name__.lower()}s"
 
@@ -33,11 +33,6 @@ class Base(AsyncAttrs, DeclarativeBase):
         columns = class_mapper(self.__class__).columns
 
         return {column.key: getattr(self, column.key) for column in columns}
-        # return {
-        #     key: value
-        #     for key, value in self.__dict__.items()
-        #     if not key.startswith("_")
-        # }
 
 
 def connection(method):
