@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from app.routes.stock import router as stock_router
 from app.routes.item import router as item_router
 from app.routes.cat import router as cat_router
+from app.routes.user import router as user_router
 
 app = FastAPI()
 
@@ -15,3 +16,4 @@ async def index():
 app.include_router(stock_router)
 app.include_router(item_router)
 app.include_router(cat_router)
+app.include_router(user_router)
