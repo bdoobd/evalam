@@ -14,3 +14,7 @@ class CatDAO(BaseDAO):
         new_cat = await CatDAO.add(session=session, **cat_data)
 
         return new_cat.to_dict()
+
+    @connection
+    async def get_cats(session: AsyncSession) -> CatWithID:
+        return await CatDAO.find_all(session=session)

@@ -12,3 +12,8 @@ async def new_cat(category: CatAdd = Depends()) -> dict:
     result = await CatDAO.add_one(category.model_dump(exclude_unset=True))
 
     return {"message": "Добавлена новая категория", "category": result}
+
+
+@router.get("/cats", summary="Получить все категории продукта")
+async def all_cats() -> list[CatWithID]:
+    return await CatDAO.get_cats()
