@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.dependencies import get_current_user
+from app.dependencies import get_current_user, get_current_active_user
 from app.dependencies import fake_users, fake_hash_password
 from app.schemas.user import User, UserInDB
 
@@ -11,7 +11,7 @@ router = APIRouter(prefix="/user", tags=["Создание полльзоват�
 
 
 @router.get("/users/me", summary="Display user information")
-async def read_me(current_user: Annotated[User, Depends(get_current_user)]):
+async def read_me(current_user: Annotated[User, Depends(get_current_active_user)]):
     return current_user
 
 

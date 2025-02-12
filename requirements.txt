@@ -4,6 +4,7 @@ annotated-types==0.7.0
 anyio==4.8.0
 appnope==0.1.4
 asttokens==3.0.0
+bcrypt==4.2.1
 certifi==2024.12.14
 charset-normalizer==3.4.1
 click==8.1.8
@@ -37,6 +38,7 @@ nest-asyncio==1.6.0
 orjson==3.10.15
 packaging==24.2
 parso==0.8.4
+passlib==1.7.4
 pexpect==4.9.0
 platformdirs==4.3.6
 prompt_toolkit==3.0.50
@@ -48,6 +50,7 @@ pydantic-extra-types==2.10.2
 pydantic-settings==2.7.1
 pydantic_core==2.27.2
 Pygments==2.19.1
+PyJWT==2.10.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 python-multipart==0.0.20
