@@ -1,10 +1,8 @@
 from datetime import timedelta, datetime, timezone
-import sys
 
 from passlib.context import CryptContext
 import jwt
 
-# from app.dependencies import get_user
 from app.config import get_auth_token_data
 from app.schemas.user import UserInDB
 

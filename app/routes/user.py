@@ -33,8 +33,8 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> T
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-
-    access_token_expires = timedelta(minutes=get_auth_token_data()["expire"])
+    auth_data = get_auth_token_data()
+    access_token_expires = timedelta(minutes=auth_data["expire"])
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
@@ -42,6 +42,9 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> T
     return Token(access_token=access_token, token_type="bearer")
 
 
-@router.get("/hashed_pwd", summary="TEST")
-async def get_hash(password: str) -> str:
-    return get_password_hash(password)
+@router.get("/access_token", summary="Get access token")
+async def get_token(username: str) -> Token:
+    access_expires = timedelta(minutes=20)
+    ready_token = create_access_token({"sub": username}, expires_delta=access_expires)
+
+    return Token(access_token=ready_token, token_type="bearer")
