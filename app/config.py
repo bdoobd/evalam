@@ -28,5 +28,5 @@ def get_auth_token_data():
     return {
         "secret_key": settings.SECRET_KEY,
         "algorithm": settings.ALGORITHM,
-        "expires": settings.ACCESS_TOKEN_EXPIRES_MIN,
+        "expire": settings.ACCESS_TOKEN_EXPIRES_MIN,
     }
