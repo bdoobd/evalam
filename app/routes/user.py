@@ -4,7 +4,7 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.dependencies import get_token, get_current_user  # get_current_active_user
+from app.dependencies import get_current_active_user, user_admin, user_powered
 from app.dao.user import UserDAO
 from app.schemas.user import User, UserRegister, UserData, UserLogin
 from app.schemas.token import Token
@@ -15,7 +15,7 @@ from app.auth.auth import (
 )
 from app.config import get_auth_token_data
 
-router = APIRouter(prefix="/user", tags=["Создание полльзователей"])
+router = APIRouter(prefix="/user", tags=["Работа с пользователями"])
 
 
 # @router.get("/users/me", summary="Display user information")
@@ -62,6 +62,6 @@ async def register(user_data: UserRegister = Depends()) -> UserData:
 
 
 @router.get("/check_token", summary="Проверка наличия токена")
-async def chk_token(user: str = Depends(get_current_user)) -> UserData:
+async def chk_token(user: str = Depends(get_current_active_user)) -> UserData:
 
     return user

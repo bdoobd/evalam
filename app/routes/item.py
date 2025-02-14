@@ -7,7 +7,7 @@ from app.schemas.stock import StockAdd
 router = APIRouter(prefix="/item", tags=["Item"])
 
 
-@router.post("/add_item", summary="Add item")
+@router.post("/new", summary="Добавление товара")
 async def new_item(item: ItemAddWithID = Depends()) -> dict:
 
     item = await ItemDAO.add_one(item.model_dump())
@@ -15,7 +15,7 @@ async def new_item(item: ItemAddWithID = Depends()) -> dict:
     return {"message": "Item added", "result": item}
 
 
-@router.post("/add_many_item", summary="Add many items")
+@router.post("/new_many", summary="Add many items")
 async def new_many_item(items: list[ItemAddWithID]) -> dict:
 
     # items = await ItemDAO.add_many([item.model_dump() for item in items])

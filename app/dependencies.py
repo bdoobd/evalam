@@ -4,7 +4,7 @@ from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 
-from app.schemas.user import User
+from app.schemas.user import UserData
 from app.auth.auth import decode_access_token
 from app.schemas.token import TokenData
 from app.dao.user import UserDAO
@@ -23,8 +23,7 @@ def get_token(request: Request):
     return token
 
 
-# async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-async def get_current_user(token: Annotated[str, Depends(get_token)]):
+async def get_current_user(token: Annotated[str, Depends(get_token)]) -> UserData:
     cred_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Аутетификация пользователя не возможна",
@@ -49,12 +48,36 @@ async def get_current_user(token: Annotated[str, Depends(get_token)]):
     return user
 
 
-# async def get_current_active_user(
-#     current_user: Annotated[User, Depends(get_current_user)]
-# ):
-#     if current_user.disabled:
-#         raise HTTPException(
-#             status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user"
-#         )
+async def get_current_active_user(
+    current_user: Annotated[UserData, Depends(get_current_user)]
+):
+    if current_user.disabled:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user"
+        )
 
-#     return current_user
+    return current_user
+
+
+async def user_admin(
+    current_user: Annotated[UserData, Depends(get_current_active_user)]
+) -> UserData:
+    if not current_user.role == "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Нет прав для просмотра раздела",
+        )
+
+    return current_user
+
+
+async def user_powered(
+    current_user: Annotated[UserData, Depends(get_current_active_user)]
+) -> UserData:
+    if not current_user.role == "powered":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Нет прав для просмотра раздела",
+        )
+
+    return current_user
