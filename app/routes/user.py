@@ -1,36 +1,37 @@
 from typing import Annotated
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.dependencies import get_current_user, get_current_active_user
-from app.schemas.user import User, UserInDB
+from app.dependencies import get_token, get_current_user  # get_current_active_user
+from app.dao.user import UserDAO
+from app.schemas.user import User, UserRegister, UserData, UserLogin
 from app.schemas.token import Token
 from app.auth.auth import (
     authenticate_user,
     create_access_token,
     get_password_hash,
-    fake_users,
 )
 from app.config import get_auth_token_data
 
 router = APIRouter(prefix="/user", tags=["Создание полльзователей"])
 
 
-@router.get("/users/me", summary="Display user information")
-async def read_me(current_user: Annotated[User, Depends(get_current_active_user)]):
-    return current_user
+# @router.get("/users/me", summary="Display user information")
+# async def read_me(current_user: Annotated[User, Depends(get_current_active_user)]):
+#     return current_user
 
 
-@router.post("/token", summary="Auth token endpoint")
-async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
-    user = authenticate_user(fake_users, form_data.username, form_data.password)
+@router.post("/login", summary="Логин пользователя")
+# async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
+async def login(response: Response, form_data: UserLogin = Depends()) -> Token:
+    user = await authenticate_user(form_data.username, form_data.password)
 
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Неверный логин или пароль",
             headers={"WWW-Authenticate": "Bearer"},
         )
     auth_data = get_auth_token_data()
@@ -39,12 +40,28 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> T
         data={"sub": user.username}, expires_delta=access_token_expires
     )
 
+    response.set_cookie(key="pass_token", value=access_token, httponly=True)
+
     return Token(access_token=access_token, token_type="bearer")
 
 
-@router.get("/access_token", summary="Get access token")
-async def get_token(username: str) -> Token:
-    access_expires = timedelta(minutes=20)
-    ready_token = create_access_token({"sub": username}, expires_delta=access_expires)
+@router.post("/register", summary="Регистрация нового пользователя")
+async def register(user_data: UserRegister = Depends()) -> UserData:
+    user_exists = await UserDAO.find_user({"username": user_data.username})
 
-    return Token(access_token=ready_token, token_type="bearer")
+    if user_exists:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="Пользователь уже существует"
+        )
+
+    user_dict = user_data.model_dump(exclude_unset=True)
+    user_dict["password"] = get_password_hash(user_data.password)
+    user = await UserDAO.add_user(user_dict)
+
+    return user
+
+
+@router.get("/check_token", summary="Проверка наличия токена")
+async def chk_token(user: str = Depends(get_current_user)) -> UserData:
+
+    return user

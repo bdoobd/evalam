@@ -45,7 +45,7 @@ class BaseDAO:
         # return await query.all()
 
     @classmethod
-    async def find_one_or_none_by_id(cls, session: AsyncSession, **filter_by):
+    async def find_one_or_none(cls, session: AsyncSession, **filter_by):
         query = select(cls.model).filter_by(**filter_by)
 
         # print(query)

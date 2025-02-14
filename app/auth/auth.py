@@ -5,38 +5,11 @@ import jwt
 
 from app.config import get_auth_token_data
 from app.schemas.user import UserInDB
+from app.dao.user import UserDAO
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 SECRET_KEY, ALGORITHM, EXPIRE = get_auth_token_data().values()
-
-# ===========================================================
-# ===========================================================
-fake_users = {
-    "johndoe": {
-        "username": "johndoe",
-        "hashedpwd": "$2b$12$DToGEUZw1YTLEztOEAfosudAAjNScrye58N/NB1P/Fe4lwDXg9wcK",
-        "role": "user",
-        "disabled": False,
-    },
-    "janedoe": {
-        "username": "janedoe",
-        "hashedpwd": "$2b$12$4HTB4sulmwJMRPeEbKV7sebp3n2xNbDldo69DMtp2RHipfl8eAOb6",
-        "role": "user",
-        "disabled": True,
-    },
-}
-
-
-def get_user(db, username: str):
-    if username in db:
-        user_dict = db[username]
-
-        return UserInDB(**user_dict)
-
-
-# ===========================================================
-# ===========================================================
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -47,14 +20,13 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-# TODO: При испорльзовании базы данных для аутентификации пользоывтеля использовать асинхронную функцию с запросом к базе данных
-def authenticate_user(fake_users, username: str, password: str):
-    user = get_user(fake_users, username)
+async def authenticate_user(username: str, password: str):
+    user = await UserDAO.find_user({"username": username})
 
     if not user:
         return False
 
-    if not verify_password(password, user.hashedpwd):
+    if not verify_password(password, user.password):
         return False
 
     return user
