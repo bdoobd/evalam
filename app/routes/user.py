@@ -24,8 +24,8 @@ router = APIRouter(prefix="/user", tags=["Работа с пользовател
 
 
 @router.post("/login", summary="Логин пользователя")
-# async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
-async def login(response: Response, form_data: UserLogin = Depends()) -> Token:
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
+    # async def login(response: Response, form_data: UserLogin = Depends()) -> Token:
     user = await authenticate_user(form_data.username, form_data.password)
 
     if not user:
@@ -40,7 +40,7 @@ async def login(response: Response, form_data: UserLogin = Depends()) -> Token:
         data={"sub": user.username}, expires_delta=access_token_expires
     )
 
-    response.set_cookie(key="pass_token", value=access_token, httponly=True)
+    # response.set_cookie(key="pass_token", value=access_token, httponly=True)
 
     return Token(access_token=access_token, token_type="bearer")
 

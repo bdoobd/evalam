@@ -5,3 +5,4 @@ __pycache__/
 *.ipynb
 chatgpt
 test*
+.DS_Store

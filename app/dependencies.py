@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status, Request
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 
@@ -9,21 +9,21 @@ from app.auth.auth import decode_access_token
 from app.schemas.token import TokenData
 from app.dao.user import UserDAO
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="./user/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="./user/login")
 
 
-def get_token(request: Request):
-    token = request.cookies.get("pass_token")
+# def get_token(request: Request):
+#     token = request.cookies.get("pass_token")
 
-    if not token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Токен доступа не найден"
-        )
+#     if not token:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED, detail="Токен доступа не найден"
+#         )
 
-    return token
+#     return token
 
 
-async def get_current_user(token: Annotated[str, Depends(get_token)]) -> UserData:
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> UserData:
     cred_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Аутетификация пользователя не возможна",
@@ -74,7 +74,7 @@ async def user_admin(
 async def user_powered(
     current_user: Annotated[UserData, Depends(get_current_active_user)]
 ) -> UserData:
-    if not current_user.role == "powered":
+    if not current_user.role == "powered" or current_user.role == "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Нет прав для просмотра раздела",
