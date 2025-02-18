@@ -8,6 +8,7 @@ from app.schemas.user import UserData
 from app.auth.auth import decode_access_token
 from app.schemas.token import TokenData
 from app.dao.user import UserDAO
+from app.exceptions import InvalidTokenException
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="./user/login")
 
@@ -24,9 +25,16 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="./user/login")
 
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> UserData:
-    cred_exception = HTTPException(
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Чёт пошло не так",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    cred_exception = InvalidTokenException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Аутетификация пользователя не возможна",
+        detail="Unable to validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:

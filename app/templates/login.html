@@ -1,0 +1,27 @@
+{% extends 'base.html' %} {% block head %}
+<meta http-equiv="X-UA-Compatible" content="IE=7" />
+<meta name="description" content="User login" />
+{% endblock %} {% block title %}Login{% endblock %} {% block content %}
+<form method="post" action="/user/login">
+  <div class="mb-3">
+    <label for="usernameField" class="form-label">User name</label>
+    <input
+      type="text"
+      name="username"
+      class="form-control"
+      id="usernameField"
+      aria-describedby="usernameHelp"
+    />
+  </div>
+  <div class="mb-3">
+    <label for="passwordField" class="form-label">Password</label>
+    <input
+      type="password"
+      name="password"
+      class="form-control"
+      id="passwordField"
+    />
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{%endblock %}

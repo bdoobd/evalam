@@ -11,5 +11,12 @@ templates = Jinja2Templates(directory="app/templates")
 
 
 @router.get("/", summary="Интерфейс проекта")
-async def index(request: Request):
-    return templates.TemplateResponse(name="base.html", context={"request": request})
+async def index(
+    user: Annotated[User, Depends(get_current_active_user)], request: Request
+):
+    return templates.TemplateResponse(name="home.html", context={"request": request})
+
+
+@router.get("/login", summary="Страница входа")
+async def login(request: Request):
+    return templates.TemplateResponse(name="login.html", context={"request": request})
