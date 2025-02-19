@@ -6,8 +6,6 @@ from app.db_base import Base, str_req
 from app.models.load import Load
 from app.models.cat import Cat
 
-# from app.models.stock import Stock
-
 
 class Item(Base):
     stock_id: Mapped[int] = mapped_column(ForeignKey("stocks.id"))
@@ -15,7 +13,7 @@ class Item(Base):
     cat_id: Mapped[int] = mapped_column(ForeignKey("cats.id"), nullable=False)
     lot: Mapped[str_req]
     pallet: Mapped[str_req]
-    roll: Mapped[str_req]
+    roll: Mapped[str_req] = mapped_column(unique=True)
     note: Mapped[str | None]
 
     stock: Mapped["Stock"] = relationship("Stock", back_populates="items")

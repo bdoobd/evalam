@@ -4,7 +4,8 @@ from passlib.context import CryptContext
 import jwt
 
 from app.config import get_auth_token_data
-from app.schemas.user import UserInDB
+
+# from app.schemas.user import UserInDB
 from app.dao.user import UserDAO
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

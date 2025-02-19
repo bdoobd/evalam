@@ -1,16 +1,15 @@
 from pydantic import BaseModel, Field
 
 
-class ItemAdd(BaseModel):
-    reference: str = Field(..., title="Item reference", min_length=10)
-    name: str = Field(..., title="Item name", min_length=2)
-    description: str = Field(..., title="Item description", min_length=5)
-    qty: int = Field(..., title="Item quantity", ge=1)
-    weight: float = Field(..., title="Item weight", ge=0)
-    volume: float | None = Field(None, title="Item volume")
+class Item(BaseModel):
+    lot: str = Field(..., title="Item lot number", min_length=5)
+    pallet: str = Field(..., title="Item pallet number", min_length=3)
+    roll: str = Field(..., title="Item roll number", min_length=4)
     note: str | None = Field(None, title="Item note", max_length=200)
-
-
-class ItemAddWithID(ItemAdd):
     stock_id: int = Field(..., title="Stock ID", ge=1)
+    cat_id: int = Field(..., title="Category ID", ge=1)
     load_id: int | None = Field(None, title="Load ID")
+
+
+class ItemWithID(Item):
+    id: int

@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 
@@ -8,50 +8,37 @@ from app.schemas.user import UserData
 from app.auth.auth import decode_access_token
 from app.schemas.token import TokenData
 from app.dao.user import UserDAO
-from app.exceptions import InvalidTokenException
+from app.exceptions import InvalidTokenException, TokenNotFoundException
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="./user/login")
 
 
-# def get_token(request: Request):
-#     token = request.cookies.get("pass_token")
+def get_token(request: Request):
+    token = request.cookies.get("pass_token")
 
-#     if not token:
-#         raise HTTPException(
-#             status_code=status.HTTP_401_UNAUTHORIZED, detail="Токен доступа не найден"
-#         )
-
-#     return token
-
-
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> UserData:
     if not token:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Чёт пошло не так",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise TokenNotFoundException
 
-    cred_exception = InvalidTokenException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Unable to validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+    return token
+
+
+async def get_current_user(token: Annotated[str, Depends(get_token)]) -> UserData:
+
     try:
         payload = decode_access_token(token)
         username: str = payload.get("sub")
 
         if username is None:
-            raise cred_exception
+            raise InvalidTokenException
 
         token_data = TokenData(username=username)
     except InvalidTokenError:
-        raise cred_exception
+        raise InvalidTokenException
 
     user = await UserDAO.find_user({"username": token_data.username})
 
     if user is None:
-        raise cred_exception
+        raise InvalidTokenException
 
     return user
 

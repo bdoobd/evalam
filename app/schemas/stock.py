@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field, ConfigDict, computed_field
 
-from app.schemas.item import ItemAddWithID
+from app.schemas.item import ItemWithID
 
 
 class StockAdd(BaseModel):
@@ -30,7 +30,7 @@ class StockWithID(Stock):
 
 
 class StockData(Stock):
-    item_data: list[ItemAddWithID] = Field(default_factory=list)
+    item_data: list[ItemWithID] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
 

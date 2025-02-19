@@ -14,9 +14,7 @@ class ItemDAO(BaseDAO):
 
         new_item = await ItemDAO.add(session=session, **item_data)
 
-        print(f"New item added: {new_item.id}")
-
-        return new_item.id
+        return new_item.to_dict()
 
     @classmethod
     @connection

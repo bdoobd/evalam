@@ -7,7 +7,7 @@ from app.models.stock import Stock
 from app.models.item import Item
 from app.db_base import connection
 from app.schemas.stock import StockData
-from app.schemas.item import ItemAddWithID
+from app.schemas.item import ItemWithID
 
 
 class StockDAO(BaseDAO):
