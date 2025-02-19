@@ -69,7 +69,7 @@ async def user_admin(
 async def user_powered(
     current_user: Annotated[UserData, Depends(get_current_active_user)]
 ) -> UserData:
-    if not current_user.role == "powered" or current_user.role == "admin":
+    if not (current_user.role == "powered" or current_user.role == "admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Нет прав для просмотра раздела",

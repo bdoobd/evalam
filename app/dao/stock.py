@@ -26,10 +26,7 @@ class StockDAO(BaseDAO):
     async def get_all_stocks(session: AsyncSession):
         result = await StockDAO.find_all(session=session)
 
-        if result:
-            return result
-
-        return {"message": "No stock found"}
+        return result
 
     @connection
     async def stock_refs(session: AsyncSession):

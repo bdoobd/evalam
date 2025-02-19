@@ -1,23 +1,29 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends
 
 from app.dao.stock import StockDAO
+from app.dependencies import get_current_active_user, user_powered
 from app.schemas.stock import StockAdd, StockWithID, StockData
+from app.schemas.user import User
 
 router = APIRouter(prefix="/stock", tags=["Записи слада"])
 
 
 @router.post("/new", summary="Добавление склаского номреа")
-async def new_stock(stock: StockAdd) -> StockWithID:
+async def new_stock(
+    stock: StockAdd, user: Annotated[User, Depends(user_powered)]
+) -> StockWithID:
     result = await StockDAO.add_one(stock.model_dump(exclude_unset=True))
 
     return result
 
 
 @router.get("/stocks", summary="Get all stock")
-async def get_all_stock():
+async def get_all_stock(
+    user: Annotated[User, Depends(get_current_active_user)]
+) -> list[StockWithID]:
     stocks = await StockDAO.get_all_stocks()
-
-    print(stocks)
 
     return stocks
 

@@ -20,19 +20,15 @@ class Stock(BaseModel):
     consignor: str
     note: str
 
-    # model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)
 
 
 class StockWithID(Stock):
     id: int
 
-    # model_config = ConfigDict(from_attributes=True)
 
-
-class StockData(Stock):
+class StockData(StockWithID):
     item_data: list[ItemWithID] = Field(default_factory=list)
-
-    model_config = ConfigDict(from_attributes=True)
 
     @computed_field
     def get_stock_days(self) -> int:

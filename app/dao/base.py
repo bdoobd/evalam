@@ -41,9 +41,6 @@ class BaseDAO:
 
         return records
 
-        # query = session.query(cls.model)
-        # return await query.all()
-
     @classmethod
     async def find_one_or_none(cls, session: AsyncSession, **filter_by):
         query = select(cls.model).filter_by(**filter_by)

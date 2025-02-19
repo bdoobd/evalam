@@ -1,13 +1,12 @@
 from typing import Annotated
 from datetime import timedelta
-import sys
 
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.responses import RedirectResponse
 
-from app.dependencies import get_current_active_user, user_admin, user_powered
 from app.dao.user import UserDAO
-from app.schemas.user import User, UserRegister, UserData, UserLogin
+from app.schemas.user import UserRegister, UserData, User
 from app.schemas.token import Token
 from app.auth.auth import (
     authenticate_user,
@@ -15,6 +14,7 @@ from app.auth.auth import (
     get_password_hash,
 )
 from app.config import get_auth_token_data
+from app.dependencies import user_admin, get_current_active_user
 
 router = APIRouter(prefix="/user", tags=["Работа с пользователями"])
 
@@ -43,8 +43,17 @@ async def login(
     return Token(access_token=access_token, token_type="bearer")
 
 
+@router.post("/logout", summary="Выход из системы")
+async def logout(response: Response):
+    response.delete_cookie(key="pass_token")
+    return {"message": "Выход выполнен"}
+
+
 @router.post("/register", summary="Регистрация нового пользователя")
-async def register(user_data: UserRegister = Depends()) -> UserData:
+async def register(
+    user_data: Annotated[UserRegister, Depends()],
+    user: Annotated[User, Depends(user_admin)],
+) -> UserData:
     user_exists = await UserDAO.find_user({"username": user_data.username})
 
     if user_exists:
@@ -59,7 +68,6 @@ async def register(user_data: UserRegister = Depends()) -> UserData:
     return user
 
 
-@router.get("/check_token", summary="Проверка наличия токена")
-async def chk_token(user: str = Depends(get_current_active_user)) -> UserData:
-
+@router.get("/me", summary="Получение информации о текущем пользователе")
+async def get_me(user: Annotated[User, Depends(get_current_active_user)]) -> UserData:
     return user
