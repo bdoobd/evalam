@@ -8,7 +8,7 @@ from app.schemas.stock import StockAdd
 from app.schemas.user import User
 from app.dependencies import user_powered, get_current_active_user
 
-router = APIRouter(prefix="/item", tags=["Item"])
+router = APIRouter(prefix="/item", tags=["Работа с товарами"])
 
 
 @router.post("/new", summary="Добавление товара")
@@ -22,10 +22,8 @@ async def new_item(
 
 
 @router.get("/items", summary="Получение данных по продукту с фильтром")
-async def find_items(
-    user: Annotated[User, Depends(get_current_active_user)], filter: dict
-):
-    pass
+async def find_items() -> list[ItemWithID]:
+    return await ItemDAO.get_items()
 
 
 # @router.post("/new_many", summary="Add many items")

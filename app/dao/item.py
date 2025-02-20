@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import BaseModel
 
 from app.dao.base import BaseDAO
 from app.db_base import connection
@@ -43,3 +44,10 @@ class ItemDAO(BaseDAO):
         print(f"New items added: {[item.id for item in new_items]}")
 
         return [item.id for item in new_items]
+
+    @connection
+    async def get_items(session: AsyncSession):
+
+        items = await ItemDAO.find_all(session=session)
+
+        return items
