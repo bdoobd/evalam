@@ -1,18 +1,31 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends
 
 from app.schemas.item import Item, ItemWithID
 from app.dao.item import ItemDAO
 from app.schemas.stock import StockAdd
+from app.schemas.user import User
+from app.dependencies import user_powered, get_current_active_user
 
 router = APIRouter(prefix="/item", tags=["Item"])
 
 
 @router.post("/new", summary="Добавление товара")
-async def new_item(item: Item) -> ItemWithID:
+async def new_item(
+    item: Item, user: Annotated[User, Depends(user_powered)]
+) -> ItemWithID:
 
     item = await ItemDAO.add_one(item.model_dump(exclude_unset=True))
 
     return item
+
+
+@router.get("/items", summary="Получение данных по продукту с фильтром")
+async def find_items(
+    user: Annotated[User, Depends(get_current_active_user)], filter: dict
+):
+    pass
 
 
 # @router.post("/new_many", summary="Add many items")
