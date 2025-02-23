@@ -2,11 +2,9 @@ from typing import Annotated
 from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status, Response
-from fastapi.security import OAuth2PasswordRequestForm
-from fastapi.responses import RedirectResponse
 
 from app.dao.user import UserDAO
-from app.schemas.user import UserRegister, UserData, User
+from app.schemas.user import UserRegister, UserData, User, UserLogin
 from app.schemas.token import Token
 from app.auth.auth import (
     authenticate_user,
@@ -15,23 +13,24 @@ from app.auth.auth import (
 )
 from app.config import get_auth_token_data
 from app.dependencies import user_admin, get_current_active_user
+from app.exceptions import IncorrectPasswordException
 
 router = APIRouter(prefix="/user", tags=["Работа с пользователями"])
 
 
 @router.post("/login", summary="Логин пользователя")
-async def login(
-    response: Response, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
-) -> Token:
+async def login(response: Response, form_data: UserLogin) -> Token:
 
     user = await authenticate_user(form_data.username, form_data.password)
 
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Неверный логин или пароль",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        # raise HTTPException(
+        #     status_code=status.HTTP_401_UNAUTHORIZED,
+        #     detail="Неверный логин или пароль",
+        #     headers={"WWW-Authenticate": "Bearer"},
+        # )
+        raise IncorrectPasswordException()
+
     auth_data = get_auth_token_data()
     access_token_expires = timedelta(minutes=auth_data["expire"])
     access_token = create_access_token(
@@ -39,6 +38,8 @@ async def login(
     )
 
     response.set_cookie(key="pass_token", value=access_token, httponly=True)
+
+    # return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
     return Token(access_token=access_token, token_type="bearer")
 

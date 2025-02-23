@@ -1,8 +1,8 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 
-from app.schemas.item import Item, ItemWithID
+from app.schemas.item import Item, ItemWithID, FilterItems
 from app.dao.item import ItemDAO
 from app.schemas.stock import StockAdd
 from app.schemas.user import User
@@ -22,8 +22,18 @@ async def new_item(
 
 
 @router.get("/items", summary="Получение данных по продукту с фильтром")
-async def find_items() -> list[ItemWithID]:
-    return await ItemDAO.get_items()
+# async def find_items(filter: Annotated[FilterItems, Query()]) -> list[ItemWithID]:
+async def find_items(filter: Annotated[FilterItems, Query()]):
+
+    return await ItemDAO.get_items(filter=filter.model_dump(exclude_none=True))
+
+
+@router.get("/item/{item_id}", summary="Получение полной информации по товару")
+async def get_item(item_id: int):
+
+    item = await ItemDAO.get_item_full_info(item_id=item_id)
+
+    return item
 
 
 # @router.post("/new_many", summary="Add many items")

@@ -2,7 +2,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=7" />
 <meta name="description" content="User login" />
 {% endblock %} {% block title %}Login{% endblock %} {% block content %}
-<form method="post" action="/user/login">
+<form method="post" class="w-50 mx-auto mt-5" id="loginForm">
+  <h1 class="text-center">Login</h1>
+  <div class="alert alert-danger hide-element" role="alert"></div>
   <div class="mb-3">
     <label for="usernameField" class="form-label">User name</label>
     <input
@@ -22,6 +24,8 @@
       id="passwordField"
     />
   </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="submit" class="btn btn-primary" name="submit" id="submit">
+    Submit
+  </button>
 </form>
 {%endblock %}

@@ -1,4 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 from pydantic import BaseModel
 
 from app.dao.base import BaseDAO
@@ -46,8 +48,31 @@ class ItemDAO(BaseDAO):
         return [item.id for item in new_items]
 
     @connection
-    async def get_items(session: AsyncSession):
+    async def get_items(session: AsyncSession, filter: dict):
 
-        items = await ItemDAO.find_all(session=session)
+        items = await ItemDAO.find_all(session=session, **filter)
 
         return items
+
+    @connection
+    async def get_item_full_info(session: AsyncSession, item_id: int):
+
+        item = await ItemDAO.get_item_info(session=session, id=item_id)
+
+        return item
+
+    # ================================================================================
+    # ================================================================================
+    @classmethod
+    async def get_item_info(cls, session: AsyncSession, id: int):
+        query = (
+            select(cls.model)
+            .options(joinedload(cls.model.stock))
+            .options(joinedload(cls.model.cat))
+            .where(cls.model.id == id)
+        )
+
+        result = await session.execute(query)
+        records = result.unique().scalars().all()
+
+        return records

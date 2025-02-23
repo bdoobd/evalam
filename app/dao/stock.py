@@ -43,30 +43,30 @@ class StockDAO(BaseDAO):
 
         return {"message": "Stock not found"}
 
-    @connection
-    async def get_stock_and_items(session: AsyncSession):
-        result = await StockDAO.get_stock_with_item(session=session)
-        # NOTE: Из за вложенного SQLAlchemy объекта в item_data не удаётся конвертировать в модель Pydantic автоматически, поэтому мануальная конвертация
-        stock_list = [
-            StockData(
-                id=stock.id,
-                reference=stock.reference,
-                date_in=stock.date_in,
-                sender=stock.sender,
-                note=stock.note,
-                item_data=(
-                    [
-                        ItemAddWithID.model_validate(item.to_dict())
-                        for item in stock.items
-                    ]
-                    if stock.items
-                    else []
-                ),
-            )
-            for stock in result
-        ]
+    # @connection
+    # async def get_stock_and_items(session: AsyncSession):
+    #     result = await StockDAO.get_stock_with_item(session=session)
+    #     # NOTE: Из за вложенного SQLAlchemy объекта в item_data не удаётся конвертировать в модель Pydantic автоматически, поэтому мануальная конвертация
+    #     stock_list = [
+    #         StockData(
+    #             id=stock.id,
+    #             reference=stock.reference,
+    #             date_in=stock.date_in,
+    #             sender=stock.sender,
+    #             note=stock.note,
+    #             item_data=(
+    #                 [
+    #                     ItemAddWithID.model_validate(item.to_dict())
+    #                     for item in stock.items
+    #                 ]
+    #                 if stock.items
+    #                 else []
+    #             ),
+    #         )
+    #         for stock in result
+    #     ]
 
-        return stock_list
+    #     return stock_list
 
     # ================================================
     # ================================================
@@ -75,14 +75,5 @@ class StockDAO(BaseDAO):
         query = select(cls.model.id, cls.model.reference)
         result = await session.execute(query)
         records = result.all()
-
-        return records
-
-    @classmethod
-    async def get_stock_with_item(cls, session: AsyncSession):
-        query = select(cls.model).options(joinedload(cls.model.items))
-
-        result = await session.execute(query)
-        records = result.unique().scalars().all()
 
         return records

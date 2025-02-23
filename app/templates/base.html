@@ -11,6 +11,10 @@
       crossorigin="anonymous"
     />
     <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='/styles/styles.css') }}"
+    />
+    <link
       rel="apple-touch-icon"
       sizes="180x180"
       href="{{ url_for('static', path='/images/icons/apple-touch-icon.png') }}"
@@ -31,6 +35,7 @@
       rel="manifest"
       href="{{ url_for('static', path='images/icons/site.webmanifest') }}"
     />
+    <script defer src="{{ url_for('static', path='js/main.js') }}"></script>
     {% block script %}{% endblock %}
     <title>{% block title %}{% endblock %}</title>
   </head>
