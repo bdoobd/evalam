@@ -1,0 +1,30 @@
+{% extends 'base.html' %} {% block head %}
+<meta http-equiv="X-UA-Compatible" content="IE=7" />
+<meta name="description" content="Categories" />
+{% endblock %} {% block title %}Categories {% endblock %} {% block content %}
+<table class="table table-striped caption-top">
+  <caption>
+    Types of products
+  </caption>
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Type</th>
+      <th scope="col">Width</th>
+      <th scope="col">Weight</th>
+      <th scope="col">&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for category in categories %}
+    <tr>
+      <th scope="row">{{ category.name }}</th>
+      <td>{{ category.cat }}</td>
+      <td>{{ category.width}}</td>
+      <td>{{ category.weight }}</td>
+      <td>[ edit ]</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

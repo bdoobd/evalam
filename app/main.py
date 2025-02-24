@@ -35,12 +35,12 @@ async def invalid_token_exception_handler(request: Request, exc: InvalidTokenExc
     return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
 
 
-# @app.exception_handler(401)
-# async def unauthorized_exception_handler(request: Request, exc: InvalidTokenException):
-#     return RedirectResponse(
-#         url="/login",
-#         status_code=status.HTTP_303_SEE_OTHER,
-#     )
+@app.exception_handler(403)
+async def unauthorized_exception_handler(request: Request, exc: Exception):
+    return RedirectResponse(
+        url="/forbidden",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
 
 
 app.include_router(stock_router)

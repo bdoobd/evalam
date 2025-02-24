@@ -60,7 +60,7 @@ async def user_admin(
     if not current_user.role == "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Нет прав для просмотра раздела",
+            detail="You don't have enough permissions to view this section",
         )
 
     return current_user
@@ -72,7 +72,7 @@ async def user_powered(
     if not (current_user.role == "powered" or current_user.role == "admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Нет прав для просмотра раздела",
+            detail="You don't have enough permissions to view this section",
         )
 
     return current_user
