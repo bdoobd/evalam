@@ -1,7 +1,9 @@
 {% extends 'base.html' %} {% block head %}
 <meta http-equiv="X-UA-Compatible" content="IE=7" />
 <meta name="description" content="User login" />
-{% endblock %} {% block title %}Login{% endblock %} {% block content %}
+{% endblock %} {% block title %}Login{% endblock %} {% block script %}
+<script defer src="{{ url_for('static', path='js/login.js') }}"></script>
+{%endblock %} {% block content %}
 <form method="post" class="w-50 mx-auto mt-5" id="loginForm">
   <h1 class="text-center">Login</h1>
   <div class="alert alert-danger hide-element" role="alert"></div>
