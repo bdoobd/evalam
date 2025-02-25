@@ -1,3 +1,14 @@
+/* Ширина */
+.col-width-5 {
+  width: 5rem;
+}
+
+.button-add {
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+}
+
 .hide-element {
   display: none;
 }

@@ -39,7 +39,7 @@
     {% block script %}{% endblock %}
     <title>{% block title %}{% endblock %}</title>
   </head>
-  <body class="bg-light">
+  <body class="bg-light d-flex flex-column h-100">
     <header>
       <nav class="navbar navbar-expand-md navbar-dark bg-success bg-gradient">
         <div class="container-fluid">
@@ -100,17 +100,19 @@
                   <li>
                     <a class="dropdown-item" href="/cats">Categories</a>
                   </li>
-                  <li><a class="dropdown-item" href="#">Users</a></li>
+                  <li><a class="dropdown-item" href="/admin">Admin</a></li>
                 </ul>
               </li>
             </ul>
-            <span class="navbar-text"> Welcome { username } </span>
+            <span class="navbar-text"> Welcome {{ username }} </span>
           </div>
         </div>
       </nav>
     </header>
-    <main class="container-lg">{% block content %}{% endblock %}</main>
-    <footer>
+    <main class="container-lg flex-shrink-0">
+      {% block content %}{% endblock %}
+    </main>
+    <footer class="footer mt-auto">
       <em>&copy; Lorem ipsum dolor sit amet.</em>
     </footer>
     <script

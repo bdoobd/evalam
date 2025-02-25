@@ -15,7 +15,9 @@ templates = Jinja2Templates(directory="app/templates")
 async def index(
     user: Annotated[User, Depends(get_current_active_user)], request: Request
 ):
-    return templates.TemplateResponse(name="home.html", context={"request": request})
+    return templates.TemplateResponse(
+        name="home.html", context={"request": request, "username": user.username}
+    )
 
 
 @router.get("/login", summary="Login page")
@@ -33,5 +35,9 @@ async def forbidden(request: Request):
 @router.get("/cats", summary="Available categories")
 async def cats(request: Request, categories: Annotated[all_cats, Depends()]):
     return templates.TemplateResponse(
-        name="categories.html", context={"request": request, "categories": categories}
+        name="categories.html",
+        context={
+            "request": request,
+            "categories": categories,
+        },
     )

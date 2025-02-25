@@ -2,17 +2,23 @@
 <meta http-equiv="X-UA-Compatible" content="IE=7" />
 <meta name="description" content="Categories" />
 {% endblock %} {% block title %}Categories {% endblock %} {% block content %}
+<h1 class="d-flex">
+  Types of products
+  <span class="ms-auto"
+    ><img
+      class="button-add bg-warning"
+      src="{{ url_for('static', path='/images/add.svg') }}"
+      alt="Add new category"
+  /></span>
+</h1>
 <table class="table table-striped caption-top">
-  <caption>
-    Types of products
-  </caption>
   <thead>
     <tr>
       <th scope="col">Name</th>
       <th scope="col">Type</th>
       <th scope="col">Width</th>
       <th scope="col">Weight</th>
-      <th scope="col">&nbsp;</th>
+      <th scope="col" class="col-width-5">&nbsp;</th>
     </tr>
   </thead>
   <tbody>
@@ -22,7 +28,17 @@
       <td>{{ category.cat }}</td>
       <td>{{ category.width}}</td>
       <td>{{ category.weight }}</td>
-      <td>[ edit ]</td>
+      <td>
+        <img
+          class="me-3"
+          src="{{ url_for('static', path='/images/edit.svg') }}"
+          alt="Edit row"
+        />
+        <img
+          src="{{ url_for('static', path='/images/trash.svg') }}"
+          alt="Delete row"
+        />
+      </td>
     </tr>
     {% endfor %}
   </tbody>

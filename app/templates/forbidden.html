@@ -2,7 +2,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=7" />
 <meta name="description" content="No rights to access this section" />
 {% endblock %} {% block title %}Forbidden{% endblock %} {% block content %}
-<h1>Forbidden section</h1>
-<h2>You have no rights to work on this area</h2>
-<h4>Pease login again with sufficient rights</h4>
+<div class="">
+  <div class="card text-center my-4">
+    <div class="card-header bg-danger bg-gradient">Forbidden section</div>
+    <div class="card-body">
+      <h5 class="card-title">
+        You do not have permission to access this area.
+      </h5>
+      <p class="card-text">
+        Please log in again with the appropriate permissions.
+      </p>
+      <a href="/login" class="btn btn-primary">Re-login</a>
+    </div>
+    <div class="card-footer bg-danger bg-gradient">Forbidden section</div>
+  </div>
+</div>
 {% endblock %}
