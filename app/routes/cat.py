@@ -12,13 +12,17 @@ router = APIRouter(prefix="/cat", tags=["Тип продукта"])
 
 @router.post("/new", summary="Добавить тип продукта")
 # async def new_cat(category: CatAdd = Depends()) -> CatWithID:
-async def new_cat(
-    category: CatAdd, user: Annotated[User, Depends(user_powered)]
-) -> CatWithID:
+async def new_cat(category: CatAdd):
+    # async def new_cat(
+    #     category: CatAdd, user: Annotated[User, Depends(user_powered)]
+    # ) -> CatWithID:
+    print(category)
 
-    result = await CatDAO.add_one(category.model_dump(exclude_unset=True))
+    return {"data": category}
 
-    return result
+    # result = await CatDAO.add_one(category.model_dump(exclude_unset=True))
+
+    # return result
 
 
 @router.get("/cats", summary="Получить все категории продукта")

@@ -24,11 +24,6 @@ async def login(response: Response, form_data: UserLogin) -> Token:
     user = await authenticate_user(form_data.username, form_data.password)
 
     if not user:
-        # raise HTTPException(
-        #     status_code=status.HTTP_401_UNAUTHORIZED,
-        #     detail="Неверный логин или пароль",
-        #     headers={"WWW-Authenticate": "Bearer"},
-        # )
         raise IncorrectPasswordException()
 
     auth_data = get_auth_token_data()
@@ -38,8 +33,6 @@ async def login(response: Response, form_data: UserLogin) -> Token:
     )
 
     response.set_cookie(key="pass_token", value=access_token, httponly=True)
-
-    # return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
     return Token(access_token=access_token, token_type="bearer")
 
