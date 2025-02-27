@@ -1,5 +1,6 @@
 const addCatButton = document.querySelector("#add-category");
 const modalWindowBlock = document.querySelector("#modal-window");
+const catTable = document.querySelector("table");
 
 addCatButton.addEventListener("click", () => {
   modalWindowBlock.insertAdjacentHTML("afterbegin", category_modal_window());
@@ -23,24 +24,35 @@ const category_modal_window = function (data = {}) {
              <form id="categoryForm" onsubmit="processForm(event)">
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="name" name="name">
+                    <input type="text" class="form-control" id="name" name="name" value="${
+                      data.name ?? ""
+                    }">
                 </div>
                 <div class="mb-3">
-                    <label for="category" class="form-label">Type</label>
-                    <input type="text" class="form-control" id="category" name="category">
+                    <label for="cat" class="form-label">Type</label>
+                    <input type="text" class="form-control" id="cat" name="cat" value="${
+                      data.cat ?? ""
+                    }">
                 </div>
                 <div class="mb-3">
                     <label for="width" class="form-label">Width</label>
-                    <input type="number" class="form-control" id="width" name="width">
+                    <input type="number" class="form-control" id="width" name="width" value="${
+                      data.width ?? ""
+                    }">
                 </div>
                 <div class="mb-3">
                     <label for="weight" class="form-label">Weight</label>
-                    <input type="number" class="form-control" id="weight" name="weight">
+                    <input type="number" class="form-control" id="weight" name="weight" value="${
+                      data.weight ?? ""
+                    }">
                 </div>
                 <div class="mb-3">
                     <label for="note" class="form-label">Note</label>
-                    <textarea class="form-control" id="note" rows="3" name="note"></textarea>
+                    <textarea class="form-control" id="note" rows="3" name="note">${
+                      data.note ?? ""
+                    }</textarea>
                 </div>
+                <input type="hidden" name="id" value="${data.id ?? ""}">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
             </div>
@@ -72,15 +84,23 @@ async function processForm(e) {
 
     const result = await response.json();
 
-    console.log(result);
+    categoryForm.reset();
+    modalWindowBlock.innerHTML = "";
+    window.location.href = "/cats";
   } catch (error) {
     console.error(error);
+    //   TODO: Отобразить ошибку пользователю
+  }
+}
+
+catTable.addEventListener("click", (e) => {
+  const element = e.target;
+  if (element.nodeName !== "IMG") {
+    return;
   }
 
-  // if (response.ok) {
-  //     modalWindowBlock.innerHTML = "";
-  //     window.location.reload();
-  // } else {
-  //     alert("Error");
-  // }
-}
+  const itemId = element.dataset.itemId;
+  const itemAction = element.dataset.itemAction;
+
+  console.dir(`Call action ${itemAction} on item ID ${itemId}`);
+});

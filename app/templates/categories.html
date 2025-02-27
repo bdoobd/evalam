@@ -27,18 +27,23 @@
   </thead>
   <tbody>
     {% for category in categories %}
-    <tr>
+    <tr data-row-id="{{ category.id }}">
       <th scope="row">{{ category.name }}</th>
       <td>{{ category.cat }}</td>
       <td>{{ category.width}}</td>
       <td>{{ category.weight }}</td>
       <td>
         <img
-          class="me-3"
+          data-item-id="{{ category.id }}"
+          data-item-action="edit"
+          class="me-3 edit-button"
           src="{{ url_for('static', path='/images/edit.svg') }}"
           alt="Edit row"
         />
         <img
+          data-item-id="{{ category.id }}"
+          data-item-action="delete"
+          class="delete-button"
           src="{{ url_for('static', path='/images/trash.svg') }}"
           alt="Delete row"
         />

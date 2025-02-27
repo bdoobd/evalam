@@ -22,3 +22,9 @@
   height: 100vh;
   width: 100vw;
 }
+
+/* Кнопки */
+.edit-button,
+.delete-button {
+  cursor: pointer;
+}
