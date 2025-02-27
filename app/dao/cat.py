@@ -18,3 +18,7 @@ class CatDAO(BaseDAO):
     @connection
     async def get_cats(session: AsyncSession) -> CatWithID:
         return await CatDAO.find_all(session=session)
+
+    @connection
+    async def get_cat_by_id(cat_id: int, session: AsyncSession) -> CatWithID:
+        return await CatDAO.find_one_or_none(session=session, id=cat_id)

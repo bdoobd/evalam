@@ -4,11 +4,12 @@ const catTable = document.querySelector("table");
 
 addCatButton.addEventListener("click", () => {
   modalWindowBlock.insertAdjacentHTML("afterbegin", category_modal_window());
-  const closeCross = document
-    .querySelector(".btn-close")
-    .addEventListener("click", () => {
-      modalWindowBlock.innerHTML = "";
-    });
+});
+
+modalWindowBlock.addEventListener("click", (e) => {
+  if (e.target.classList.contains("btn-close")) {
+    modalWindowBlock.innerHTML = "";
+  }
 });
 
 const category_modal_window = function (data = {}) {
@@ -17,7 +18,9 @@ const category_modal_window = function (data = {}) {
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Add new category</h5>
+                <h5 class="modal-title" id="staticBackdropLabel">${
+                  data.title ?? "Add new"
+                } category</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -53,6 +56,9 @@ const category_modal_window = function (data = {}) {
                     }</textarea>
                 </div>
                 <input type="hidden" name="id" value="${data.id ?? ""}">
+                <input type="hidden" name="action" value="${
+                  data.action ?? "create"
+                }">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
             </div>
@@ -87,6 +93,8 @@ async function processForm(e) {
     categoryForm.reset();
     modalWindowBlock.innerHTML = "";
     window.location.href = "/cats";
+
+    return result;
   } catch (error) {
     console.error(error);
     //   TODO: Отобразить ошибку пользователю
@@ -102,5 +110,55 @@ catTable.addEventListener("click", (e) => {
   const itemId = element.dataset.itemId;
   const itemAction = element.dataset.itemAction;
 
-  console.dir(`Call action ${itemAction} on item ID ${itemId}`);
+  if (itemAction && doAction[itemAction]) {
+    doAction[itemAction](itemId);
+  }
 });
+
+const doAction = {
+  edit: async function (itemId) {
+    const data = await getCategoryData(itemId);
+    data.title = "Update";
+    data.action = "update";
+
+    modalWindowBlock.insertAdjacentHTML(
+      "afterbegin",
+      category_modal_window(data)
+    );
+  },
+  delete: function (itemId) {
+    console.log("deleteItem", itemId);
+  },
+};
+const getCategoryData = async (catId) => {
+  try {
+    const response = await fetch(`/cat/${catId}`);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail);
+    }
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// const deleteItem = async (itemId) => {
+//   console.log("deleteItem", itemId);
+//   // try {
+//   //   const response = await fetch(`/cat/${itemId}/delete`, {
+//   //     method: "DELETE",
+//   //   });
+
+//   //   if (!response.ok) {
+//   //     const errorData = await response.json();
+//   //     throw new Error(errorData.detail);
+//   //   }
+
+//   //   const result = await response.json();
+//   //   console.log(result);
+//   // } catch (error) {
+//   //   console.error(error);
+//   // }
+// };
