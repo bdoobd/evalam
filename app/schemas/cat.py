@@ -21,8 +21,8 @@ class Cat(BaseModel):
     weight: float
     note: str | None
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class CatWithID(Cat):
     id: int
-
-    model_config = ConfigDict(from_attributes=True)

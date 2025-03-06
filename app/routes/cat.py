@@ -35,3 +35,20 @@ async def cat_by_id(
     result = await CatDAO.get_cat_by_id(cat_id)
 
     return result
+
+
+@router.put("/{cat_id}", summary="Обновить категорию продукта по ID")
+async def update_cat(
+    cat_id: int, category: CatAdd, user: Annotated[User, Depends(user_powered)]
+) -> CatWithID:
+
+    result = await CatDAO.update_cat(cat_id, category.model_dump(exclude_unset=True))
+
+    return result
+
+
+@router.delete("/{cat_id}", summary="Удалить категорию продукта")
+async def delete_cat(cat_id: int, user: Annotated[User, Depends(user_powered)]) -> dict:
+    await CatDAO.delete_cat_by_id(cat_id=cat_id)
+
+    return {"message": "Category deleted successfully"}

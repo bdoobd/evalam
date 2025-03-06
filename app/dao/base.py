@@ -3,6 +3,7 @@ from typing import Any, Dict, List
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import select
+from pydantic import BaseModel
 
 
 class BaseDAO:
@@ -49,3 +50,32 @@ class BaseDAO:
         record = result.scalar_one_or_none()
 
         return record
+
+    @classmethod
+    async def update(cls, session: AsyncSession, id: int, values: BaseModel):
+        found = await cls.find_one_or_none(session, id=id)
+        if found is None:
+            raise ValueError(f"{cls.model.__name__} with id {id} not found")
+
+        for key, value in values.items():
+            setattr(found, key, value)
+
+        try:
+            await session.commit()
+        except SQLAlchemyError as e:
+            await session.rollback()
+            raise e
+
+        return found
+
+    @classmethod
+    async def delete_one_by_id(cls, session: AsyncSession, id: int):
+        try:
+            cat = await session.get(cls.model, id)
+
+            if cat:
+                await session.delete(cat)
+                await session.commit()
+        except SQLAlchemyError as e:
+            await session.rollback()
+            raise e

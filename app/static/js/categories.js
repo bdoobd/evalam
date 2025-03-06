@@ -12,7 +12,7 @@ modalWindowBlock.addEventListener("click", (e) => {
   }
 });
 
-const category_modal_window = function (data = {}) {
+const category_modal_window = function (data = { action: "create" }) {
   return `
 <div class="modal-base">
     <div class="modal-dialog">
@@ -67,16 +67,49 @@ const category_modal_window = function (data = {}) {
 </div>`;
 };
 
-async function processForm(e) {
+const delete_category_modal_window = function (data) {
+  return `
+<div class="modal-base">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Delete category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+             <form id="deleteForm" onsubmit="deleteCat(event)">
+                <h6>Do you really need to delete category from DB?</h6>
+                <p>Name - ${data.name},</p>
+                <p>Category - ${data.cat},</p>
+                <p>Item width - ${data.width},</p>
+                <p>Item wight - ${data.weight},</p>
+                <p>Category note - ${data.note}</p>
+                <input type="hidden" name="id" value="${data.id}">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+            </div>
+        </div>
+    </div>
+</div>`;
+};
+
+async function processForm(e, data) {
   e.preventDefault();
 
   const categoryForm = document.getElementById("categoryForm");
   const categoryFormData = new FormData(categoryForm);
   const categoryData = Object.fromEntries(categoryFormData.entries());
+  let actionURL = "/cat/new";
+  let actionMethod = "POST";
+
+  if (categoryData.action === "update") {
+    actionMethod = "PUT";
+    actionURL = `/cat/${categoryData.id}`;
+  }
 
   try {
-    const response = await fetch("/cat/new", {
-      method: "POST",
+    const response = await fetch(actionURL, {
+      method: actionMethod,
       headers: {
         "Content-Type": "application/json",
       },
@@ -97,8 +130,17 @@ async function processForm(e) {
     return result;
   } catch (error) {
     console.error(error);
-    //   TODO: Отобразить ошибку пользователю
   }
+}
+
+async function deleteCat(e, id) {
+  e.preventDefault();
+
+  const deleteForm = document.getElementById("deleteForm");
+  const deleteFormData = new FormData(deleteForm);
+  const deleteData = Object.fromEntries(deleteFormData);
+  // TODO:  Отправить запрос на delete ендпойнт
+  console.log(`Delete ${deleteData.id}`);
 }
 
 catTable.addEventListener("click", (e) => {
@@ -126,10 +168,15 @@ const doAction = {
       category_modal_window(data)
     );
   },
-  delete: function (itemId) {
-    console.log("deleteItem", itemId);
+  delete: async function (itemId) {
+    const data = await getCategoryData(itemId);
+    modalWindowBlock.insertAdjacentHTML(
+      "afterbegin",
+      delete_category_modal_window(data)
+    );
   },
 };
+
 const getCategoryData = async (catId) => {
   try {
     const response = await fetch(`/cat/${catId}`);
