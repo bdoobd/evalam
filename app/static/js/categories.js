@@ -79,11 +79,11 @@ const delete_category_modal_window = function (data) {
             <div class="modal-body">
              <form id="deleteForm" onsubmit="deleteCat(event)">
                 <h6>Do you really need to delete category from DB?</h6>
-                <p>Name - ${data.name},</p>
-                <p>Category - ${data.cat},</p>
-                <p>Item width - ${data.width},</p>
-                <p>Item wight - ${data.weight},</p>
-                <p>Category note - ${data.note}</p>
+                <p><small>Name - ${data.name},</small></p>
+                <p><small>Category - ${data.cat},</small></p>
+                <p><small>Item width - ${data.width},</small></p>
+                <p><small>Item wight - ${data.weight},</small></p>
+                <p><small>Category note - ${data.note}</small></p>
                 <input type="hidden" name="id" value="${data.id}">
                 <button type="submit" class="btn btn-danger">Delete</button>
             </form>
@@ -133,13 +133,30 @@ async function processForm(e, data) {
   }
 }
 
-async function deleteCat(e, id) {
+async function deleteCat(e) {
   e.preventDefault();
 
   const deleteForm = document.getElementById("deleteForm");
   const deleteFormData = new FormData(deleteForm);
   const deleteData = Object.fromEntries(deleteFormData);
-  // TODO:  Отправить запрос на delete ендпойнт
+  try {
+    const response = await fetch(`/cat/${deleteData.id}`, {
+      method: "DELETE",
+      "Content-Type": "application/json",
+      body: deleteData.id,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail);
+    }
+
+    deleteForm.reset();
+    modalWindowBlock.innerHTML = "";
+    window.location.href = "/cats";
+  } catch (error) {
+    console.error(error);
+  }
   console.log(`Delete ${deleteData.id}`);
 }
 
@@ -190,22 +207,3 @@ const getCategoryData = async (catId) => {
     console.error(error);
   }
 };
-
-// const deleteItem = async (itemId) => {
-//   console.log("deleteItem", itemId);
-//   // try {
-//   //   const response = await fetch(`/cat/${itemId}/delete`, {
-//   //     method: "DELETE",
-//   //   });
-
-//   //   if (!response.ok) {
-//   //     const errorData = await response.json();
-//   //     throw new Error(errorData.detail);
-//   //   }
-
-//   //   const result = await response.json();
-//   //   console.log(result);
-//   // } catch (error) {
-//   //   console.error(error);
-//   // }
-// };
