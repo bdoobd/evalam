@@ -1,0 +1,59 @@
+{% extends 'base.html' %} {% block head %}
+<meta http-equiv="X-UA-Compatible" content="IE=7" />
+<meta name="description" content="Users" />
+{% endblock %} {% block title %}Users {% endblock %}{% block script %}
+<script defer src="{{ url_for('static', path='js/users.js') }}"></script>
+{%endblock %} {% block content %}
+<h1 class="d-flex">
+  List of users
+  <span class="ms-auto"
+    ><img
+      id="add-usery"
+      class="button-add bg-warning"
+      src="{{ url_for('static', path='/images/add.svg') }}"
+      alt="Add new user"
+  /></span>
+</h1>
+<div id="modal-window"></div>
+<table class="table table-striped caption-top">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Username</th>
+      <th scope="col">Role</th>
+      <th scope="col">Disabled</th>
+      <th scope="col">Created</th>
+      <th scope="col">Modified</th>
+      <th scope="col" class="col-width-5">&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr data-row-id="{{ user.id }}">
+      <th scope="row">{{ user.id }}</th>
+      <th scope="row">{{ user.username }}</th>
+      <td>{{ user.role }}</td>
+      <td>{{ user.disabled }}</td>
+      <td>{{ user.created }}</td>
+      <td>{{ user.modified }}</td>
+      <td>
+        <img
+          data-item-id="{{ user.id }}"
+          data-item-action="edit"
+          class="me-3 edit-button"
+          src="{{ url_for('static', path='/images/edit.svg') }}"
+          alt="Edit row"
+        />
+        <img
+          data-item-id="{{ user.id }}"
+          data-item-action="delete"
+          class="delete-button"
+          src="{{ url_for('static', path='/images/trash.svg') }}"
+          alt="Delete row"
+        />
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

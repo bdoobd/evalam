@@ -20,3 +20,7 @@ class UserDAO(BaseDAO):
         result = await UserDAO.find_one_or_none(session=session, **filter)
 
         return result
+
+    @connection
+    async def find_all_users(session: AsyncSession):
+        return await UserDAO.find_all(session=session)

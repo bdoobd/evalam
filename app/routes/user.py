@@ -65,3 +65,8 @@ async def register(
 @router.get("/me", summary="Получение информации о текущем пользователе")
 async def get_me(user: Annotated[User, Depends(get_current_active_user)]) -> UserData:
     return user
+
+
+@router.get("/all", summary="Получить всех пользователей")
+async def all_users(user: Annotated[User, Depends(user_admin)]) -> list[UserData]:
+    return await UserDAO.find_all_users()
