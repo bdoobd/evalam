@@ -8,7 +8,7 @@
   List of users
   <span class="ms-auto"
     ><img
-      id="add-usery"
+      id="add-user"
       class="button-add bg-warning"
       src="{{ url_for('static', path='/images/add.svg') }}"
       alt="Add new user"
@@ -33,7 +33,12 @@
       <th scope="row">{{ user.id }}</th>
       <th scope="row">{{ user.username }}</th>
       <td>{{ user.role }}</td>
-      <td>{{ user.disabled }}</td>
+      <td>
+        {% if user.disabled %}
+        <span class="text-danger">Inactive</span>
+        {% else %}
+        <span class="text-success">Active</span> {% endif %}
+      </td>
       <td>{{ user.created }}</td>
       <td>{{ user.modified }}</td>
       <td>

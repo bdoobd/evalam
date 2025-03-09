@@ -45,9 +45,10 @@ async def logout(response: Response):
 
 @router.post("/register", summary="Регистрация нового пользователя")
 async def register(
-    user_data: Annotated[UserRegister, Depends()],
+    user_data: UserRegister,
     user: Annotated[User, Depends(user_admin)],
 ) -> UserData:
+
     user_exists = await UserDAO.find_user({"username": user_data.username})
 
     if user_exists:
@@ -55,8 +56,15 @@ async def register(
             status_code=status.HTTP_409_CONFLICT, detail="Пользователь уже существует"
         )
 
+    if user_data.password != user_data.confirm_password:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Пароль и подтверждение не совпадают",
+        )
+
     user_dict = user_data.model_dump(exclude_unset=True)
     user_dict["password"] = get_password_hash(user_data.password)
+    user_dict.pop("confirm_password")
     user = await UserDAO.add_user(user_dict)
 
     return user
@@ -70,3 +78,12 @@ async def get_me(user: Annotated[User, Depends(get_current_active_user)]) -> Use
 @router.get("/all", summary="Получить всех пользователей")
 async def all_users(user: Annotated[User, Depends(user_admin)]) -> list[UserData]:
     return await UserDAO.find_all_users()
+
+
+@router.get("/roles", summary="Получить все роли для пользователя")
+async def get_roles():
+    from app.helpers.roles import Roles
+
+    roles = {role: role.title() for role in Roles}
+
+    return roles
