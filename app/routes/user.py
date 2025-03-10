@@ -14,6 +14,8 @@ from app.auth.auth import (
 from app.config import get_auth_token_data
 from app.dependencies import user_admin, get_current_active_user
 from app.exceptions import IncorrectPasswordException
+from app.helpers.roles import Roles
+
 
 router = APIRouter(prefix="/user", tags=["Работа с пользователями"])
 
@@ -81,9 +83,21 @@ async def all_users(user: Annotated[User, Depends(user_admin)]) -> list[UserData
 
 
 @router.get("/roles", summary="Получить все роли для пользователя")
-async def get_roles():
-    from app.helpers.roles import Roles
-
+async def get_roles() -> dict:
     roles = {role: role.title() for role in Roles}
 
     return roles
+
+
+@router.get("/{user_id}", summary="Получить данные пользователя по ID")
+async def get_user(
+    user_id: int, user: Annotated[User, Depends(user_admin)]
+) -> UserData:
+    return await UserDAO.find_user({"id": user_id})
+
+
+@router.delete("/{user_id}", summary="Удалить пользователя по ID")
+async def delete_user(user_id: int, user: Annotated[User, Depends(user_admin)]) -> dict:
+    await UserDAO.delete_user_by_id(user_id=user_id)
+
+    return {"message": "User delete successfully"}

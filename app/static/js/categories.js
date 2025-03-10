@@ -86,7 +86,7 @@ const delete_category_modal_window = function (data) {
                 <p><small>Category note - ${data.note}</small></p>
                 <input type="hidden" name="id" value="${data.id}">
                 <button type="submit" class="btn btn-danger">Delete</button>
-            </form>
+              </form>
             </div>
         </div>
     </div>
@@ -194,7 +194,7 @@ const doAction = {
   },
 };
 
-const getCategoryData = async (catId) => {
+const getCategoryData = async function (catId) {
   try {
     const response = await fetch(`/cat/${catId}`);
     if (!response.ok) {
