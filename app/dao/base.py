@@ -1,17 +1,22 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Generic, TypeVar
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import select
 from pydantic import BaseModel
 
+from app.dao.db_base import Base
 
-class BaseDAO:
-    model = None
+T = TypeVar("T", bound=Base)
+
+
+class BaseDAO(Generic[T]):
+    model: type[T]
 
     @classmethod
-    async def add(cls, session: AsyncSession, **kwargs):
-        new_instance = cls.model(**kwargs)
+    async def add(cls, session: AsyncSession, values: BaseModel):
+        values_dict = values.model_dump(exclude_unset=True)
+        new_instance = cls.model(**values_dict)
         session.add(new_instance)
         try:
             await session.commit()
@@ -34,22 +39,35 @@ class BaseDAO:
         return new_instances
 
     @classmethod
-    async def find_all(cls, session: AsyncSession, **filter_by):
-        query = select(cls.model).filter_by(**filter_by)
+    async def find_all(cls, session: AsyncSession, filters: BaseModel | None):
+        if filters:
+            filter_dict = filters.model_dump(exclude_unset=True)
+        else:
+            filter_dict = {}
 
-        result = await session.execute(query)
-        records = result.scalars().all()
+        try:
+            query = select(cls.model).filter_by(**filter_dict)
 
-        return records
+            result = await session.execute(query)
+            records = result.scalars().all()
+
+            return records
+        except SQLAlchemyError as e:
+            raise
 
     @classmethod
-    async def find_one_or_none(cls, session: AsyncSession, **filter_by):
-        query = select(cls.model).filter_by(**filter_by)
+    async def find_one_or_none(cls, session: AsyncSession, filters: BaseModel):
+        filter_dict = filters.model_dump(exclude_unset=True)
+        # filter_dict = filters
+        try:
+            query = select(cls.model).filter_by(**filter_dict)
 
-        result = await session.execute(query)
-        record = result.scalar_one_or_none()
+            result = await session.execute(query)
+            record = result.scalar_one_or_none()
 
-        return record
+            return record
+        except SQLAlchemyError as e:
+            raise
 
     @classmethod
     async def update(cls, session: AsyncSession, id: int, values: BaseModel):

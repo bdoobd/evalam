@@ -1,7 +1,7 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.db_base import Base, str_req
+from app.dao.db_base import Base, str_req
 
 from app.models.load import Load
 from app.models.cat import Cat

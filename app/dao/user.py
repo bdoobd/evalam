@@ -1,12 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import create_model
 
-from app.db_base import connection
+from app.dao.session_maker import connection
 from app.dao.base import BaseDAO
 from app.models.user import User
 from app.schemas.user import UserData
 
 
-class UserDAO(BaseDAO):
+class UserDAO(BaseDAO[User]):
     model = User
 
     @connection
@@ -17,8 +18,11 @@ class UserDAO(BaseDAO):
         return new_user
 
     @connection
-    async def find_user(filter: dict, session: AsyncSession) -> UserData:
-        result = await UserDAO.find_one_or_none(session=session, **filter)
+    async def find_user(username: str, session: AsyncSession) -> UserData:
+        FindUser = create_model("FindUser", username=(str, ...))
+        result = await UserDAO.find_one_or_none(
+            session=session, filters=FindUser(username=username)
+        )
 
         return result
 

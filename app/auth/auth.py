@@ -22,7 +22,7 @@ def get_password_hash(password: str) -> str:
 
 
 async def authenticate_user(username: str, password: str):
-    user = await UserDAO.find_user({"username": username})
+    user = await UserDAO.find_user(username=username)
 
     if not user:
         return False

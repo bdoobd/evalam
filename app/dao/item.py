@@ -4,12 +4,12 @@ from sqlalchemy.orm import joinedload
 from pydantic import BaseModel
 
 from app.dao.base import BaseDAO
-from app.db_base import connection
+from app.dao.session_maker import connection
 from app.models.item import Item
 from app.models.stock import Stock
 
 
-class ItemDAO(BaseDAO):
+class ItemDAO(BaseDAO[Item]):
     model = Item
 
     @connection

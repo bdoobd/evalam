@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.db_base import Base, str_req_uq
+from app.dao.db_base import Base, str_req_uq
 
 
 class Invoice(Base):

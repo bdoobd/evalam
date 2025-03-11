@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import func
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.db_base import Base, str_req, str_req_uq
+from app.dao.db_base import Base, str_req, str_req_uq
 from app.helpers.roles import Roles
 
 

@@ -5,12 +5,12 @@ from sqlalchemy import select
 from app.dao.base import BaseDAO
 from app.models.stock import Stock
 from app.models.item import Item
-from app.db_base import connection
+from app.dao.session_maker import connection
 from app.schemas.stock import StockData
 from app.schemas.item import ItemWithID
 
 
-class StockDAO(BaseDAO):
+class StockDAO(BaseDAO[Stock]):
     model = Stock
 
     @connection

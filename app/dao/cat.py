@@ -2,11 +2,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dao.base import BaseDAO
 from app.models.cat import Cat
-from app.db_base import connection
+from app.dao.session_maker import connection
 from app.schemas.cat import CatWithID
 
 
-class CatDAO(BaseDAO):
+class CatDAO(BaseDAO[Cat]):
     model = Cat
 
     @connection

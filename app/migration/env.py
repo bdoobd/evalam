@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
-from app.db_base import Base, DB_URL
+from app.dao.db_base import Base, DB_URL
 from app.models.item import Item
 from app.models.stock import Stock
 from app.models.cat import Cat

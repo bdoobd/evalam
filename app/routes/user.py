@@ -24,7 +24,7 @@ router = APIRouter(prefix="/user", tags=["Работа с пользовател
 async def login(response: Response, form_data: UserLogin) -> Token:
 
     user = await authenticate_user(form_data.username, form_data.password)
-
+    breakpoint()
     if not user:
         raise IncorrectPasswordException()
 

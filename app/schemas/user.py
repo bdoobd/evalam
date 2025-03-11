@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field, ConfigDict
 
-from app.db_base import str_req_uq, str_req
+from app.dao.db_base import str_req_uq, str_req
 
 
 class User(BaseModel):
