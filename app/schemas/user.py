@@ -25,6 +25,10 @@ class UserData(User):
     id: int
 
 
+class UserCreate(User):
+    password: str_req
+
+
 class UserRegister(User):
     password: str_req = Field(
         min_length=5, max_length=15, description="Пароль пользователя"
@@ -40,6 +44,15 @@ class UserLogin(BaseModel):
         ..., min_length=5, max_length=15, description="Пароль пользователя"
     )
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class FindUser(BaseModel):
     username: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class UserUpdate(BaseModel):
+    role: str_req = "user"
+    disabled: bool = False

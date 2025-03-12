@@ -36,7 +36,7 @@ const userModalWindow = function (data = { action: "create" }) {
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">${
                   data.title ?? "Add new"
-                } category</h5>
+                } user data</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -45,7 +45,7 @@ const userModalWindow = function (data = { action: "create" }) {
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control" id="username" name="username" value="${
                       data.username ?? ""
-                    }">
+                    }" ${data.action === "update" ? "disabled" : ""}>
                 </div>
                 <div class="mb-3">
                     <label for="role" class="form-label">Role</label>
@@ -54,11 +54,16 @@ const userModalWindow = function (data = { action: "create" }) {
                     </select>
                 </div>
                 <div class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" value="true" name="disabled" id="disabled">
+                    <input class="form-check-input" type="checkbox" value="true" name="disabled" id="disabled" ${
+                      data.disabled ? `checked` : ``
+                    }>
                     <label class="form-check-label" for="disabled">
                     Disabled
                     </label>
                 </div>
+                ${
+                  data.action === "create"
+                    ? `
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" name="password" value="">
@@ -66,7 +71,9 @@ const userModalWindow = function (data = { action: "create" }) {
                 <div class="mb-3">
                     <label for="confirm_password" class="form-label">Confirm password</label>
                     <input type="password" class="form-control" id="confirm_password" name="confirm_password" value="">
-                </div>
+                </div>`
+                    : ``
+                }
                 <input type="hidden" name="id" value="${data.id ?? ""}">
                 <input type="hidden" name="action" value="${
                   data.action ?? "create"
@@ -116,8 +123,8 @@ async function processForm(e, data) {
   let actionMethod = "POST";
 
   if (userData.action === "update") {
-    let actionURL = `/user/${userData.id}`;
-    let actionMethod = "PUT";
+    actionURL = `/user/${userData.id}`;
+    actionMethod = "PUT";
   }
 
   try {
@@ -136,7 +143,6 @@ async function processForm(e, data) {
 
     const result = await response.json();
 
-    console.log(result);
     userForm.reset();
     modalWindowBlock.innerHTML = "";
     window.location.href = "/admin";
@@ -181,7 +187,7 @@ async function getRoles() {
     console.error(error);
   }
 }
-async function createSelectOptions() {
+async function createSelectOptions(role = "user") {
   const selectList = document.getElementById("role");
 
   const rolesData = await getRoles();
@@ -190,7 +196,7 @@ async function createSelectOptions() {
     optionItem.value = key;
     optionItem.textContent = rolesData[key];
 
-    if (key === "user") {
+    if (key === role) {
       optionItem.selected = true;
     }
 
@@ -215,15 +221,13 @@ const getUserData = async function (id) {
 };
 
 const doAction = {
-  edit: async function (itemId) {
-    // const data = await getCategoryData(itemId);
+  edit: async function (id) {
+    const data = await getUserData(id);
     data.title = "Update";
     data.action = "update";
 
-    // modalWindowBlock.insertAdjacentHTML(
-    //   "afterbegin",
-    //   category_modal_window(data)
-    // );
+    modalWindowBlock.insertAdjacentHTML("afterbegin", userModalWindow(data));
+    createSelectOptions(data.role);
   },
   delete: async function (itemId) {
     const data = await getUserData(itemId);

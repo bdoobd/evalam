@@ -4,7 +4,14 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 
 from app.dao.user import UserDAO
-from app.schemas.user import UserRegister, UserData, User, UserLogin, FindUser
+from app.schemas.user import (
+    UserRegister,
+    UserData,
+    User,
+    UserLogin,
+    FindUser,
+    UserUpdate,
+)
 from app.schemas.token import Token
 from app.auth.auth import (
     authenticate_user,
@@ -50,7 +57,6 @@ async def register(
     user_data: UserRegister,
     user: Annotated[User, Depends(user_admin)],
 ) -> UserData:
-    breakpoint()
     user_exists = await UserDAO.find_user(FindUser(username=user_data.username))
 
     if user_exists:
@@ -93,7 +99,18 @@ async def get_roles() -> dict:
 async def get_user(
     user_id: int, user: Annotated[User, Depends(user_admin)]
 ) -> UserData:
-    return await UserDAO.find_user({"id": user_id})
+    return await UserDAO.find_user_by_id(user_id=user_id)
+
+
+@router.put("/{user_id}", summary="Обновить данные пользователя по ID")
+async def update_user(
+    user_id: int, user_data: UserUpdate, user: Annotated[User, Depends(user_admin)]
+):
+    return {
+        "message": "User data was updated",
+        "id": user_id,
+        "user data": user_data.model_dump(exclude_unset=True),
+    }
 
 
 @router.delete("/{user_id}", summary="Удалить пользователя по ID")
