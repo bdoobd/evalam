@@ -5,7 +5,7 @@ import jwt
 
 from app.config import get_auth_token_data
 
-# from app.schemas.user import UserInDB
+from app.schemas.user import UserLogin, UserData, FindUser
 from app.dao.user import UserDAO
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -21,13 +21,15 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-async def authenticate_user(username: str, password: str):
-    user = await UserDAO.find_user(username=username)
+# async def authenticate_user(username: str, password: str):
+async def authenticate_user(user_data: UserLogin) -> UserData:
+
+    user = await UserDAO.find_user(FindUser(username=user_data.username))
 
     if not user:
         return False
 
-    if not verify_password(password, user.password):
+    if not verify_password(user_data.password, user.password):
         return False
 
     return user

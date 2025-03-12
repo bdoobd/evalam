@@ -4,7 +4,7 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 
 from app.dao.user import UserDAO
-from app.schemas.user import UserRegister, UserData, User, UserLogin
+from app.schemas.user import UserRegister, UserData, User, UserLogin, FindUser
 from app.schemas.token import Token
 from app.auth.auth import (
     authenticate_user,
@@ -23,8 +23,8 @@ router = APIRouter(prefix="/user", tags=["Работа с пользовател
 @router.post("/login", summary="Логин пользователя")
 async def login(response: Response, form_data: UserLogin) -> Token:
 
-    user = await authenticate_user(form_data.username, form_data.password)
-    breakpoint()
+    user = await authenticate_user(form_data)
+
     if not user:
         raise IncorrectPasswordException()
 
@@ -50,8 +50,8 @@ async def register(
     user_data: UserRegister,
     user: Annotated[User, Depends(user_admin)],
 ) -> UserData:
-
-    user_exists = await UserDAO.find_user({"username": user_data.username})
+    breakpoint()
+    user_exists = await UserDAO.find_user(FindUser(username=user_data.username))
 
     if user_exists:
         raise HTTPException(

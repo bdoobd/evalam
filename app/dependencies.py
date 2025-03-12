@@ -32,7 +32,8 @@ async def get_current_user(token: Annotated[str, Depends(get_token)]) -> UserDat
     except InvalidTokenError:
         raise InvalidTokenException
 
-    user = await UserDAO.find_user({"username": token_data.username})
+    # user = await UserDAO.find_user({"username": token_data.username})
+    user = await UserDAO.find_user(token_data)
 
     if user is None:
         raise InvalidTokenException

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Generic, TypeVar
+from typing import Any, Dict, List, Generic, TypeVar, Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
@@ -12,6 +12,45 @@ T = TypeVar("T", bound=Base)
 
 class BaseDAO(Generic[T]):
     model: type[T]
+
+    @classmethod
+    async def find_all(cls, session: AsyncSession, filters: BaseModel | None = None):
+
+        if filters:
+            filter_dict = filters.model_dump(exclude_unset=True)
+        else:
+            filter_dict = {}
+
+        try:
+            query = select(cls.model).filter_by(**filter_dict)
+
+            result = await session.execute(query)
+            records = result.scalars().all()
+
+            return records
+        except SQLAlchemyError as e:
+            raise
+
+    @classmethod
+    async def find_one_or_none(cls, session: AsyncSession, filters: BaseModel):
+        filter_dict = filters.model_dump(exclude_unset=True)
+        try:
+            query = select(cls.model).filter_by(**filter_dict)
+
+            result = await session.execute(query)
+            record = result.scalar_one_or_none()
+
+            return record
+        except SQLAlchemyError as e:
+            raise
+
+    @classmethod
+    async def find_one_or_none_by_id(cls, session: AsyncSession, id: int):
+        try:
+            return await session.get(cls.model, id)
+        except SQLAlchemyError as e:
+            print(f"Houston, we have error: {e}")
+            raise
 
     @classmethod
     async def add(cls, session: AsyncSession, values: BaseModel):
@@ -39,43 +78,14 @@ class BaseDAO(Generic[T]):
         return new_instances
 
     @classmethod
-    async def find_all(cls, session: AsyncSession, filters: BaseModel | None):
-        if filters:
-            filter_dict = filters.model_dump(exclude_unset=True)
-        else:
-            filter_dict = {}
-
-        try:
-            query = select(cls.model).filter_by(**filter_dict)
-
-            result = await session.execute(query)
-            records = result.scalars().all()
-
-            return records
-        except SQLAlchemyError as e:
-            raise
-
-    @classmethod
-    async def find_one_or_none(cls, session: AsyncSession, filters: BaseModel):
-        filter_dict = filters.model_dump(exclude_unset=True)
-        # filter_dict = filters
-        try:
-            query = select(cls.model).filter_by(**filter_dict)
-
-            result = await session.execute(query)
-            record = result.scalar_one_or_none()
-
-            return record
-        except SQLAlchemyError as e:
-            raise
-
-    @classmethod
     async def update(cls, session: AsyncSession, id: int, values: BaseModel):
-        found = await cls.find_one_or_none(session, id=id)
+        breakpoint()
+        found = await cls.find_one_or_none_by_id(session, id=id)
+
         if found is None:
             raise ValueError(f"{cls.model.__name__} with id {id} not found")
 
-        for key, value in values.items():
+        for key, value in values.model_dump().items():
             setattr(found, key, value)
 
         try:

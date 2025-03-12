@@ -26,3 +26,7 @@ class Cat(BaseModel):
 
 class CatWithID(Cat):
     id: int
+
+
+class CatByID(BaseModel):
+    id: int

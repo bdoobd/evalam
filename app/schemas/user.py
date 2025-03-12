@@ -39,3 +39,7 @@ class UserLogin(BaseModel):
     password: str = Field(
         ..., min_length=5, max_length=15, description="Пароль пользователя"
     )
+
+
+class FindUser(BaseModel):
+    username: str
