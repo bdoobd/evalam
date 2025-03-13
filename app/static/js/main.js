@@ -1,11 +1,13 @@
-// const nav = document.querySelector("nav");
+import Item from "./views/item.js";
 
-// nav.addEventListener("click", (event) => {
-//   event.preventDefault();
-//   if (
-//     event.target.hasAttribute("href") &&
-//     event.target.getAttribute("href") !== "#"
-//   ) {
-//     console.dir("point found");
-//   }
-// });
+const controlAddItem = async function () {
+  console.log("Handler running  ");
+
+  Item.render();
+};
+
+const init = function () {
+  Item.addHandlerAddNew(controlAddItem);
+};
+
+init();

@@ -35,7 +35,11 @@
       rel="manifest"
       href="{{ url_for('static', path='images/icons/site.webmanifest') }}"
     /> -->
-    <script defer src="{{ url_for('static', path='js/main.js') }}"></script>
+    <script
+      defer
+      type="module"
+      src="{{ url_for('static', path='js/main.js') }}"
+    ></script>
     {% block script %}{% endblock %}
     <title>{% block title %}{% endblock %}</title>
   </head>

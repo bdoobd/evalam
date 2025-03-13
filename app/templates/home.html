@@ -2,10 +2,18 @@
 <meta http-equiv="X-UA-Compatible" content="IE=7" />
 <meta name="description" content="EVALAM rolls inventory" />
 {% endblock %} {% block title %}On stock {% endblock %} {% block content %}
+<h1 class="d-flex">
+  Items on stock
+  <span class="ms-auto"
+    ><img
+      id="add-item"
+      class="button-add bg-warning"
+      src="{{ url_for('static', path='/images/add.svg') }}"
+      alt="Add new item"
+  /></span>
+</h1>
+<div id="modalDialogWindow"></div>
 <table class="table table-striped caption-top">
-  <caption>
-    On stock
-  </caption>
   <thead>
     <tr>
       <th scope="col">Stock</th>
@@ -13,6 +21,8 @@
       <th scope="col">Width</th>
       <th scope="col">Pallet</th>
       <th scope="col">Lot</th>
+      <th scope="col">Roll</th>
+      <th scope="col" class="col-width-5">&nbsp;</th>
     </tr>
   </thead>
   <tbody>
@@ -22,6 +32,13 @@
       <td>1300</td>
       <td>05043</td>
       <td>0101</td>
+      <td>0031</td>
+      <td>
+        <img
+          src="{{ url_for('static', path='/images/edit.svg') }}"
+          alt="Edit item"
+        />
+      </td>
     </tr>
     <tr>
       <th scope="row">FEU032/25</th>
@@ -29,6 +46,13 @@
       <td>1800</td>
       <td>05066</td>
       <td>0222</td>
+      <td>0043</td>
+      <td>
+        <img
+          src="{{ url_for('static', path='/images/edit.svg') }}"
+          alt="Edit item"
+        />
+      </td>
     </tr>
     <tr>
       <th scope="row">FEU045/25</th>
@@ -36,6 +60,13 @@
       <td>2200</td>
       <td>05054</td>
       <td>0104</td>
+      <td>0101</td>
+      <td>
+        <img
+          src="{{ url_for('static', path='/images/edit.svg') }}"
+          alt="Edit item"
+        />
+      </td>
     </tr>
   </tbody>
 </table>
