@@ -105,12 +105,10 @@ async def get_user(
 @router.put("/{user_id}", summary="Обновить данные пользователя по ID")
 async def update_user(
     user_id: int, user_data: UserUpdate, user: Annotated[User, Depends(user_admin)]
-):
-    return {
-        "message": "User data was updated",
-        "id": user_id,
-        "user data": user_data.model_dump(exclude_unset=True),
-    }
+) -> UserData:
+    result = await UserDAO.update_user(user_id=user_id, user_data=user_data)
+
+    return result
 
 
 @router.delete("/{user_id}", summary="Удалить пользователя по ID")

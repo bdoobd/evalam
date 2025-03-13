@@ -45,7 +45,7 @@ const category_modal_window = function (data = { action: "create" }) {
                 </div>
                 <div class="mb-3">
                     <label for="weight" class="form-label">Weight</label>
-                    <input type="number" class="form-control" id="weight" name="weight" value="${
+                    <input type="number" class="form-control" id="weight" name="weight" step="0.01" value="${
                       data.weight ?? ""
                     }">
                 </div>

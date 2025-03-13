@@ -4,7 +4,7 @@ from pydantic import create_model
 from app.dao.session_maker import connection
 from app.dao.base import BaseDAO
 from app.models.user import User
-from app.schemas.user import UserData, UserLogin, FindUser, UserCreate
+from app.schemas.user import UserData, UserLogin, FindUser, UserCreate, UserUpdate
 
 
 class UserDAO(BaseDAO[User]):
@@ -33,6 +33,13 @@ class UserDAO(BaseDAO[User]):
         new_user = await UserDAO.add(session=session, values=UserCreate(**user_data))
 
         return new_user
+
+    @connection
+    async def update_user(
+        user_id: int, user_data: UserUpdate, session: AsyncSession
+    ) -> UserData:
+
+        return await UserDAO.update(session=session, id=user_id, values=user_data)
 
     @connection
     async def delete_user_by_id(user_id: int, session: AsyncSession):

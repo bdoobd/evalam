@@ -79,7 +79,6 @@ class BaseDAO(Generic[T]):
 
     @classmethod
     async def update(cls, session: AsyncSession, id: int, values: BaseModel):
-        breakpoint()
         found = await cls.find_one_or_none_by_id(session, id=id)
 
         if found is None:
