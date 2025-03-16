@@ -2,16 +2,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=7" />
 <meta name="description" content="EVALAM rolls inventory" />
 {% endblock %} {% block title %}On stock {% endblock %} {% block content %}
-<h1 class="d-flex">
-  Items on stock
-  <span class="ms-auto"
-    ><img
-      id="add-item"
-      class="button-add bg-warning"
-      src="{{ url_for('static', path='/images/add.svg') }}"
-      alt="Add new item"
-  /></span>
-</h1>
+<h1 class="d-flex">Items on stock</h1>
 <div id="modalDialogWindow"></div>
 <table class="table table-striped caption-top">
   <thead>
