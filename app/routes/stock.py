@@ -10,6 +10,15 @@ from app.schemas.user import User
 router = APIRouter(prefix="/stock", tags=["Записи слада"])
 
 
+@router.get("/stocks", summary="Get all stock")
+async def get_all_stock(
+    user: Annotated[User, Depends(get_current_active_user)],
+) -> list[StockWithID]:
+    stocks = await StockDAO.get_all_stocks()
+
+    return stocks
+
+
 @router.post("/new", summary="Добавление склаского номреа")
 async def new_stock(
     stock: StockAdd, user: Annotated[User, Depends(user_powered)]
@@ -17,15 +26,6 @@ async def new_stock(
     result = await StockDAO.add_one(stock.model_dump(exclude_unset=True))
 
     return result
-
-
-@router.get("/stocks", summary="Get all stock")
-async def get_all_stock(
-    user: Annotated[User, Depends(get_current_active_user)]
-) -> list[StockWithID]:
-    stocks = await StockDAO.get_all_stocks()
-
-    return stocks
 
 
 # @router.get("/get_refs", summary="Get all stock references")

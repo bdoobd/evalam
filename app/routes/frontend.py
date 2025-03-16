@@ -48,6 +48,11 @@ async def cats(
     )
 
 
+@router.get("/stocks", summary="Get all stocks")
+async def stocks(request: Request, user: Annotated[User, Depends(user_powered)]):
+    return templates.TemplateResponse(name="stocks.html", context={"request": request})
+
+
 @router.get("/admin", summary="Раздел администатирования пользователей")
 async def users(
     request: Request,
