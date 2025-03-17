@@ -7,6 +7,7 @@ from app.dependencies import get_current_active_user, user_powered, user_admin
 from app.schemas.user import User
 from app.routes.cat import all_cats
 from app.routes.user import all_users, get_roles
+from app.routes.stock import get_on_stock
 
 router = APIRouter(prefix="", tags=["Frontend часть проекта"])
 templates = Jinja2Templates(directory="app/templates")
@@ -48,9 +49,15 @@ async def cats(
     )
 
 
-@router.get("/stocks", summary="Get all stocks")
-async def stocks(request: Request, user: Annotated[User, Depends(user_powered)]):
-    return templates.TemplateResponse(name="stocks.html", context={"request": request})
+@router.get("/stocks", summary="Получить референсы на складе")
+async def stocks(
+    request: Request,
+    stocks: Annotated[get_on_stock, Depends()],
+    user: Annotated[User, Depends(get_current_active_user)],
+):
+    return templates.TemplateResponse(
+        name="stocks.html", context={"request": request, "stocks": stocks}
+    )
 
 
 @router.get("/admin", summary="Раздел администатирования пользователей")

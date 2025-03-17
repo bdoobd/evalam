@@ -18,6 +18,7 @@ class Stock(BaseModel):
     reference: str
     date: datetime
     consignor: str
+    ready: bool
     note: str
 
     model_config = ConfigDict(from_attributes=True)

@@ -7,16 +7,25 @@ from app.dependencies import get_current_active_user, user_powered
 from app.schemas.stock import StockAdd, StockWithID, StockData
 from app.schemas.user import User
 
-router = APIRouter(prefix="/stock", tags=["Записи слада"])
+router = APIRouter(prefix="/stock", tags=["Записи склада"])
 
 
 @router.get("/stocks", summary="Get all stock")
 async def get_all_stock(
     user: Annotated[User, Depends(get_current_active_user)],
 ) -> list[StockWithID]:
+
     stocks = await StockDAO.get_all_stocks()
 
     return stocks
+
+
+@router.get("/onstock", summary="Получить все референсы на складе")
+async def get_on_stock(
+    user: Annotated[User, Depends(get_current_active_user)],
+) -> list[StockWithID]:
+
+    return await StockDAO.get_on_stock()
 
 
 @router.post("/new", summary="Добавление склаского номреа")

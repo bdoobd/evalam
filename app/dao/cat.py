@@ -16,7 +16,7 @@ class CatDAO(BaseDAO[Cat]):
         return new_cat.to_dict()
 
     @connection
-    async def get_cats(session: AsyncSession) -> CatWithID:
+    async def get_cats(session: AsyncSession) -> list[CatWithID]:
         return await CatDAO.find_all(session=session)
 
     @connection
