@@ -9,11 +9,12 @@ class Item {
       this._modalMarkup()
     );
   }
-  generateStockMarkup() {
-    return `
-            <div>Lorem</div>
-        `;
-  }
+
+  // generateStockMarkup() {
+  //   return `
+  //           <div>Lorem</div>
+  //       `;
+  // }
 
   addHandlerAddNew(handler) {
     // this._parentElement.insertAdjacentHTML(
