@@ -15,7 +15,7 @@ const handlerTmp = async function (element) {
 
 const init = function () {
   Item.addHandlerAddNew(controlAddItem);
-  Stock.addHandlerAddNew(handlerTmp);
+  Stock.addHandlerModalWindow(handlerTmp);
 };
 
 init();

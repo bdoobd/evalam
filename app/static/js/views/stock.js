@@ -1,8 +1,9 @@
 class Stock {
   _parentElement = document.getElementById("modal-window");
   _addButton = document.getElementById("add-stock");
+  _table = document.getElementById("stocks");
 
-  render() {
+  render(data = {}) {
     this._parentElement.insertAdjacentHTML("afterbegin", this._modalMarkup());
     this.closeButtonHandler();
     this.submitFormData();
@@ -13,10 +14,10 @@ class Stock {
       e.preventDefault();
 
       const form = e.target;
-      //   console.log(`Form ${form} submited`);
+      // console.log(form);
       const formData = new FormData(form);
       const data = Object.fromEntries(formData.entries());
-      console.log(data.reference);
+      console.log(data);
     });
   }
 
@@ -28,13 +29,36 @@ class Stock {
     });
   }
 
-  addHandlerAddNew(handler) {
+  addHandlerModalWindow(handler) {
     this._addButton.addEventListener("click", (e) => {
       e.preventDefault();
-      const addButton = e.target;
-      //   console.log("element", addButton);
-      handler(addButton);
+      this.render();
     });
+
+    if (this._table) {
+      this._table.addEventListener("click", (e) => {
+        e.preventDefault();
+        const element = e.target;
+        if (element.nodeName !== "IMG") {
+          return;
+        }
+
+        const itemId = element.dataset.itemId;
+        const itemAction = element.dataset.itemAction;
+
+        if (itemAction) {
+          this[itemAction](itemId);
+        }
+      });
+    }
+  }
+
+  async edit(id) {
+    console.log(`Edit stock ${id}`);
+  }
+
+  async delete(id) {
+    console.log(`Delete stock ${id}`);
   }
 
   _modalMarkup() {
@@ -49,19 +73,19 @@ class Stock {
                                 <form id="stockForm">
                                     <div class="mb-3">
                                         <label for="reference" class="form-label">Stock ref</label>
-                                        <input type="text" class="form-control" id="reference">
+                                        <input type="text" class="form-control" id="reference" name="reference">
                                     </div>
                                     <div class="mb-3">
                                         <label for="date" class="form-label">Stock date</label>
-                                        <input type="date" class="form-control" id="date">
+                                        <input type="date" class="form-control" id="date" name="date">
                                     </div>
                                     <div class="mb-3">
                                         <label for="consignor" class="form-label">Consignor</label>
-                                        <input type="text" class="form-control" id="consignor">
+                                        <input type="text" class="form-control" id="consignor" name="consignor">
                                     </div>
                                     <div class="mb-3">
                                         <label for="note" class="form-label">Note</label>
-                                        <textarea class="form-control" id="note" rows="3"></textarea>
+                                        <textarea class="form-control" id="note" rows="3" name="note"></textarea>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Submit</button>
                                 </form>
