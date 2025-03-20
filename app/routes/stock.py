@@ -4,13 +4,13 @@ from fastapi import APIRouter, Depends
 
 from app.dao.stock import StockDAO
 from app.dependencies import get_current_active_user, user_powered
-from app.schemas.stock import StockAdd, StockWithID, StockData
+from app.schemas.stock import StockAdd, StockWithID, Stock, StockData
 from app.schemas.user import User
 
 router = APIRouter(prefix="/stock", tags=["Записи склада"])
 
 
-@router.get("/stocks", summary="Get all stock")
+@router.get("/stocks", summary="Получить все записи склада")
 async def get_all_stock(
     user: Annotated[User, Depends(get_current_active_user)],
 ) -> list[StockWithID]:
@@ -28,29 +28,29 @@ async def get_on_stock(
     return await StockDAO.get_on_stock()
 
 
+@router.get("/{stock_id}", summary="Получить запись склада по ID")
+async def get_stock_by_id(
+    stock_id: int, user: Annotated[User, Depends(get_current_active_user)]
+) -> StockWithID:
+    stock = await StockDAO.find_stock_by_id(stock_id)
+
+    return stock
+
+
 @router.post("/new", summary="Добавление склаского номреа")
 async def new_stock(
     stock: StockAdd, user: Annotated[User, Depends(user_powered)]
 ) -> StockWithID:
-    result = await StockDAO.add_one(stock.model_dump(exclude_unset=True))
 
-    return result
-
-
-# @router.get("/get_refs", summary="Get all stock references")
-# async def get_all_stock_refs() -> list[StockWithID]:
-#     refs = await StockDAO.stock_refs()
-
-#     return refs
+    return await StockDAO.add_one(stock)
 
 
-# @router.get("/get_stock/{stock_id}", summary="Get stock by ID")
-# async def get_stock_by_id(stock_id: int):
-#     stock = await StockDAO.fetch_stock_by_id(stock_id)
+@router.put("/{stock_id}", summary="Обновить запись склада")
+async def update_stock(
+    stock_id: int, stock: StockWithID, user: Annotated[User, Depends(user_powered)]
+) -> StockWithID:
 
-#     # print(type(stock))
-
-#     return stock
+    return await StockDAO.update_stock(stock_id, stock)
 
 
 # @router.get("/get_stock_with_items", summary="Get stock with item")

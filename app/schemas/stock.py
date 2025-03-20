@@ -9,6 +9,7 @@ class StockAdd(BaseModel):
     reference: str = Field(..., title="Stock reference", min_length=8)
     date: datetime = Field(..., title="Stock date inbound")
     consignor: str = Field(..., title="Sender on goods", min_length=5)
+    ready: bool = Field(default=False, title="Stock ready")
     note: str | None = Field(None, title="Motes of the stock", max_length=200)
 
     model_config = ConfigDict(from_attributes=True)
@@ -18,7 +19,7 @@ class Stock(BaseModel):
     reference: str
     date: datetime
     consignor: str
-    ready: bool
+    ready: bool = False
     note: str
 
     model_config = ConfigDict(from_attributes=True)
