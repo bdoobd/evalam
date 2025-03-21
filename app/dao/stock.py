@@ -21,21 +21,8 @@ class StockDAO(BaseDAO[Stock]):
         return await StockDAO.find_all(session=session, filters=OnStock(ready=False))
 
     @connection
-    async def add_one(stock_data: StockAdd, session: AsyncSession) -> StockWithID:
-
-        new_stock = await StockDAO.add(session=session, values=stock_data)
-
-        return new_stock
-
-    @connection
     async def get_all_stocks(session: AsyncSession):
         result = await StockDAO.find_all(session=session)
-
-        return result
-
-    @connection
-    async def stock_refs(session: AsyncSession):
-        result = await StockDAO.get_refs_with_id(session=session)
 
         return result
 
@@ -51,10 +38,21 @@ class StockDAO(BaseDAO[Stock]):
             return {"message": "Stock not found"}
 
     @connection
+    async def add_one(stock_data: StockAdd, session: AsyncSession) -> StockWithID:
+
+        new_stock = await StockDAO.add(session=session, values=stock_data)
+
+        return new_stock
+
+    @connection
     async def update_stock(
         stock_id: int, stock: StockWithID, session: AsyncSession
     ) -> StockWithID:
         return await StockDAO.update(session=session, id=stock_id, values=stock)
+
+    @connection
+    async def delete_stock(stock_id: int, session: AsyncSession) -> StockWithID:
+        return await StockDAO.delete_one_by_id(session=session, id=stock_id)
 
     # @connection
     # async def get_stock_and_items(session: AsyncSession):
@@ -81,12 +79,17 @@ class StockDAO(BaseDAO[Stock]):
 
     #     return stock_list
 
-    # ================================================
-    # ================================================
-    @classmethod
-    async def get_refs_with_id(cls, session: AsyncSession):
-        query = select(cls.model.id, cls.model.reference)
-        result = await session.execute(query)
-        records = result.all()
+    # @connection
+    # async def stock_refs(session: AsyncSession):
+    #     result = await StockDAO.get_refs_with_id(session=session)
 
-        return records
+    #     return result
+    # ================================================
+    # ================================================
+    # @classmethod
+    # async def get_refs_with_id(cls, session: AsyncSession):
+    #     query = select(cls.model.id, cls.model.reference)
+    #     result = await session.execute(query)
+    #     records = result.all()
+
+    #     return records

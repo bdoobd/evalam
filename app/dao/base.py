@@ -98,11 +98,13 @@ class BaseDAO(Generic[T]):
     @classmethod
     async def delete_one_by_id(cls, session: AsyncSession, id: int):
         try:
-            cat = await session.get(cls.model, id)
+            item = await session.get(cls.model, id)
 
-            if cat:
-                await session.delete(cat)
+            if item:
+                await session.delete(item)
                 await session.commit()
+
+                return item
         except SQLAlchemyError as e:
             await session.rollback()
             raise e

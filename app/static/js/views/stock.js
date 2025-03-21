@@ -4,10 +4,12 @@ class Stock {
   _table = document.getElementById("stocks");
 
   render(data = {}) {
-    this._parentElement.insertAdjacentHTML(
-      "afterbegin",
-      this._modalMarkup(data)
-    );
+    let modal = this._modalMarkup(data);
+    if (data.action === "delete") {
+      modal = this._modalDeleteMarkup(data);
+    }
+
+    this._parentElement.insertAdjacentHTML("afterbegin", modal);
     this.closeButtonHandler();
     this.submitFormData();
   }
@@ -19,25 +21,30 @@ class Stock {
         e.preventDefault();
 
         const form = e.target;
-        // console.log(form);
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
-        // console.log(data);
         let method = "POST";
         let url = "/stock/new";
+        let req_body = JSON.stringify(data);
 
         if (data.action === "update") {
           method = "PUT";
           url = `/stock/${data.id}`;
         }
 
-        // console.log("method", method, "url", url);
+        if (data.action === "delete") {
+          method = "DELETE";
+          url = `/stock/${data.id}`;
+          // TODO: В переменнут надо занести id, а не объект
+          req_body = data.id;
+        }
+
         const response = await fetch(url, {
           method: method,
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(data),
+          body: req_body,
         });
 
         if (!response.ok) {
@@ -87,9 +94,6 @@ class Stock {
   }
 
   async edit(id) {
-    // TODO: Получить данные по id
-    //       Указать данные в форму
-    //       Отправить обновлённые данные на сервер
     const request = await fetch(`/stock/${id}`);
     const data = await request.json();
     data.date = new Date(data.date).toISOString().split("T")[0];
@@ -99,7 +103,12 @@ class Stock {
   }
 
   async delete(id) {
-    console.log(`Delete stock ${id}`);
+    const request = await fetch(`/stock/${id}`);
+    const data = await request.json();
+    data.date = new Date(data.date).toISOString().split("T")[0];
+    data.action = "delete";
+
+    this.render(data);
   }
 
   _modalMarkup(data = { action: "create" }) {
@@ -145,6 +154,34 @@ class Stock {
                                       data.action ?? "create"
                                     }">
                                     <button type="submit" class="btn btn-primary">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+  }
+
+  _modalDeleteMarkup(data) {
+    return `<div class="modal-base">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">Delete stock</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="stockForm">
+                                    <div class="mb-3">
+                                        <p>Are you sure you want to delete this stock?</p>
+                                    </div>
+                                    <div class="mb-3">
+                                      <p>Stock reference: ${data.reference}</p>
+                                      <p>Stock date: ${data.date}</p>
+                                      <p>Stock consignor: ${data.consignor}</p>
+                                      <p>Stock note: ${data.note}</p>
+                                    </div>
+                                    <input type="hidden" name="id" value="${data.id}">
+                                    <button type="submit" class="btn btn-primary">Delete</button>
                                 </form>
                             </div>
                         </div>

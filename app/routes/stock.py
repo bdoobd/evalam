@@ -53,6 +53,22 @@ async def update_stock(
     return await StockDAO.update_stock(stock_id, stock)
 
 
+@router.delete("/{id}", summary="Удалить запись склада")
+async def delete_stock(
+    id: int, user: Annotated[User, Depends(user_powered)]
+) -> StockWithID:
+
+    return await StockDAO.delete_stock(id)
+
+
+# @router.delete("/{stock_id}", summary="Удалить запись склада")
+# async def delete_stock(
+#     stock_id: int, user: Annotated[User, Depends(user_powered)]
+# ) -> StockWithID:
+
+#     return await StockDAO.delete_stock(stock_id)
+
+
 # @router.get("/get_stock_with_items", summary="Get stock with item")
 # async def get_full_stock() -> list[StockData]:
 #     stocks = await StockDAO.get_stock_and_items()
