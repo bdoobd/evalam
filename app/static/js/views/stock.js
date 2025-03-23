@@ -35,7 +35,6 @@ class Stock {
         if (data.action === "delete") {
           method = "DELETE";
           url = `/stock/${data.id}`;
-          // TODO: В переменнут надо занести id, а не объект
           req_body = data.id;
         }
 
@@ -69,14 +68,14 @@ class Stock {
     });
   }
 
-  addHandlerModalWindow(handler) {
+  addHandlerModalWindow() {
     this._addButton.addEventListener("click", (e) => {
       e.preventDefault();
       this.render();
     });
 
     if (this._table) {
-      this._table.addEventListener("click", (e) => {
+      this._table.addEventListener("click", async (e) => {
         e.preventDefault();
         const element = e.target;
         if (element.nodeName !== "IMG") {
@@ -87,28 +86,38 @@ class Stock {
         const itemAction = element.dataset.itemAction;
 
         if (itemAction) {
-          this[itemAction](itemId);
+          await this[itemAction](itemId);
         }
       });
     }
   }
 
   async edit(id) {
-    const request = await fetch(`/stock/${id}`);
-    const data = await request.json();
-    data.date = new Date(data.date).toISOString().split("T")[0];
-    data.title = "Update";
-    data.action = "update";
-    this.render(data);
+    try {
+      const request = await fetch(`/stock/${id}`);
+      const data = await request.json();
+
+      data.date = new Date(data.date).toISOString().split("T")[0];
+      data.title = "Update";
+      data.action = "update";
+
+      this.render(data);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async delete(id) {
-    const request = await fetch(`/stock/${id}`);
-    const data = await request.json();
-    data.date = new Date(data.date).toISOString().split("T")[0];
-    data.action = "delete";
+    try {
+      const request = await fetch(`/stock/${id}`);
+      const data = await request.json();
+      data.date = new Date(data.date).toISOString().split("T")[0];
+      data.action = "delete";
 
-    this.render(data);
+      this.render(data);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   _modalMarkup(data = { action: "create" }) {
@@ -181,6 +190,7 @@ class Stock {
                                       <p>Stock note: ${data.note}</p>
                                     </div>
                                     <input type="hidden" name="id" value="${data.id}">
+                                    <input type="hidden" name="action" value="${data.action}">
                                     <button type="submit" class="btn btn-primary">Delete</button>
                                 </form>
                             </div>

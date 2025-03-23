@@ -1,5 +1,5 @@
 class Item {
-  _parentElement = document.getElementById("modalDialogWindow");
+  _parentElement = document.getElementById("modal-window");
   _addButton = document.getElementById("add-item");
 
   render() {
@@ -25,7 +25,7 @@ class Item {
       //   const addButton = e.target.closest("#add-item");
       const addButton = e.target;
 
-      console.log(addButton);
+      // console.log(addButton);
       handler();
     });
   }

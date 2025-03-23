@@ -7,15 +7,15 @@ const controlAddItem = async function () {
   Item.render();
 };
 
-const handlerTmp = async function (element) {
-  // console.log(`Selected element: ${element}`);
+// const handlerTmp = async function (element) {
+//   // console.log(`Selected element: ${element}`);
 
-  Stock.render();
-};
+//   Stock.render();
+// };
 
 const init = function () {
   Item.addHandlerAddNew(controlAddItem);
-  Stock.addHandlerModalWindow(handlerTmp);
+  Stock.addHandlerModalWindow();
 };
 
 init();
