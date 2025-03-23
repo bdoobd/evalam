@@ -3,18 +3,10 @@ class Item {
   _addButton = document.getElementById("add-item");
 
   render() {
-    this._parentElement.insertAdjacentHTML(
-      "afterbegin",
-      // this.generateStockMarkup()
-      this._modalMarkup()
-    );
-  }
+    this._parentElement.insertAdjacentHTML("afterbegin", this._modalMarkup());
 
-  // generateStockMarkup() {
-  //   return `
-  //           <div>Lorem</div>
-  //       `;
-  // }
+    this.submitFormData();
+  }
 
   addHandlerAddNew(handler) {
     // this._parentElement.insertAdjacentHTML(
@@ -30,6 +22,18 @@ class Item {
     });
   }
 
+  submitFormData() {
+    document
+      .getElementById("itemForm")
+      .addEventListener("submit", async (e) => {
+        // e.preventDefault();
+
+        const form = e.target;
+
+        console.log("form", form);
+      });
+  }
+  // TODO: Можно ли добавить кусок HTML кода внутрь формы динамически?
   _modalMarkup() {
     return `<div class="modal-base">
     <div class="modal-dialog">
@@ -39,7 +43,7 @@ class Item {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-             <form id="stockForm" onsubmit="processForm(event)">
+             <form id="itemForm">
                 <div class="form-check mb-3">
                   <input class="form-check-input" type="radio" name="stock-ref" id="new-stock">
                   <label class="form-check-label" for="new-stock">
