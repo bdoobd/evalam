@@ -2,9 +2,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
-from app.schemas.item import Item, ItemWithID, FilterItems
+from app.schemas.item import Item, ItemWithID, FilterItems, ItemAddWithNewStock
 from app.dao.item import ItemDAO
-from app.schemas.stock import StockAdd
+
+# from app.schemas.stock import StockAdd
 from app.schemas.user import User
 from app.dependencies import user_powered, get_current_active_user
 
@@ -13,12 +14,16 @@ router = APIRouter(prefix="/item", tags=["Работа с товарами"])
 
 @router.post("/new", summary="Добавление товара")
 async def new_item(
-    item: Item, user: Annotated[User, Depends(user_powered)]
+    # item_data: Item | ItemAddWithNewStock, user: Annotated[User, Depends(user_powered)]
+    item_data,
+    user: Annotated[User, Depends(user_powered)],
 ) -> ItemWithID:
 
-    item = await ItemDAO.add_one(item.model_dump(exclude_unset=True))
+    # item = await ItemDAO.add_one(item.model_dump(exclude_unset=True))
 
-    return item
+    print(item_data)
+
+    return item_data
 
 
 @router.get("/items", summary="Получение данных по продукту с фильтром")

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 
 from app.dao.stock import StockDAO
 from app.dependencies import get_current_active_user, user_powered
-from app.schemas.stock import StockAdd, StockWithID, Stock, StockData
+from app.schemas.stock import StockAdd, StockWithID, Stock
 from app.schemas.user import User
 
 router = APIRouter(prefix="/stock", tags=["Записи склада"])

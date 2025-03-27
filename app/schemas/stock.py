@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field, ConfigDict, computed_field
 
-from app.schemas.item import ItemWithID
+# from app.schemas.item import ItemWithID
 
 
 class StockAdd(BaseModel):
@@ -28,10 +28,9 @@ class Stock(BaseModel):
 class StockWithID(Stock):
     id: int
 
-
-class StockData(StockWithID):
-    item_data: list[ItemWithID] = Field(default_factory=list)
+    # class StockData(StockWithID):
+    #     item_data: list[ItemWithID] = Field(default_factory=list)
 
     @computed_field
     def get_stock_days(self) -> int:
-        return (datetime.now() - self.date_in).days
+        return (datetime.now() - self.date).days

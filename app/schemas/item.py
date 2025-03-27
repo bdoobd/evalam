@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field
 
+from app.schemas.stock import StockAdd
+
 
 class Item(BaseModel):
     lot: str = Field(..., title="Item lot number", min_length=5)
@@ -13,6 +15,10 @@ class Item(BaseModel):
 
 class ItemWithID(Item):
     id: int
+
+
+class ItemAddWithNewStock(Item):
+    new_stock: StockAdd
 
 
 class FilterItems(BaseModel):

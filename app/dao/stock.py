@@ -8,7 +8,7 @@ from app.dao.base import BaseDAO
 from app.models.stock import Stock
 from app.models.item import Item
 from app.dao.session_maker import connection
-from app.schemas.stock import StockData, StockWithID, StockAdd
+from app.schemas.stock import StockWithID, StockAdd
 from app.schemas.item import ItemWithID
 
 
