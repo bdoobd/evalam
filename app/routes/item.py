@@ -15,9 +15,9 @@ router = APIRouter(prefix="/item", tags=["Работа с товарами"])
 @router.post("/new", summary="Добавление товара")
 async def new_item(
     # item_data: Item | ItemAddWithNewStock, user: Annotated[User, Depends(user_powered)]
-    item_data,
+    item_data: ItemAddWithNewStock,
     user: Annotated[User, Depends(user_powered)],
-) -> ItemWithID:
+):
 
     # item = await ItemDAO.add_one(item.model_dump(exclude_unset=True))
 

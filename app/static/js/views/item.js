@@ -1,4 +1,4 @@
-import { getOpenRefs, getCategories } from "../model.js";
+import { getOpenRefs, getCategories, fixFormDataToAddItem } from "../model.js";
 
 class Item {
   _parentElement = document.getElementById("modal-window");
@@ -47,10 +47,15 @@ class Item {
         this._stockType = form.elements["stock-ref"]?.value;
 
         if (form.elements["submit-item"]) {
-          // console.log("Add new item");
+          const action = form.elements["submit-item"].value;
           const formData = new FormData(form);
-          const data = Object.fromEntries(formData.entries());
-          console.log(data);
+          let data = Object.fromEntries(formData.entries());
+
+          if (action == "new") {
+            data = fixFormDataToAddItem(data);
+          }
+
+          console.log(JSON.stringify(data));
 
           const response = await fetch("/item/new", {
             method: "POST",
@@ -116,7 +121,7 @@ class Item {
         ${stockField}
       <div class="mb-3">
         <label for="cat" class="form-label">Item category</label>
-        <select class="form-select" id="cat" name="cat">
+        <select class="form-select" id="cat_id" name="cat_id">
           ${catOptions} 
         </select>
       </div>

@@ -23,3 +23,21 @@ export const getCategories = async function () {
     console.error("Error: ", error);
   }
 };
+
+export const fixFormDataToAddItem = function (obj) {
+  const new_stock = {
+    reference: obj.reference,
+    date: obj.date,
+    consignor: obj.consignor,
+    note: obj.note,
+  };
+
+  delete obj.reference;
+  delete obj.date;
+  delete obj.consignor;
+  delete obj.note;
+
+  obj.new_stock = new_stock;
+
+  return obj;
+};
