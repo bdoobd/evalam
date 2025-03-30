@@ -1,8 +1,8 @@
-from typing import Annotated
+from typing import Annotated, Union
 
 from fastapi import APIRouter, Depends, Query
 
-from app.schemas.item import Item, ItemWithID, FilterItems, ItemAddWithNewStock
+from app.schemas.item import Item, ItemWithID, FilterItems, ItemAdd, ItemAddWithNewStock
 from app.dao.item import ItemDAO
 
 # from app.schemas.stock import StockAdd
@@ -10,19 +10,22 @@ from app.schemas.user import User
 from app.dependencies import user_powered, get_current_active_user
 
 router = APIRouter(prefix="/item", tags=["Работа с товарами"])
+ItemType = Union[ItemAddWithNewStock, ItemAdd]
 
 
 @router.post("/new", summary="Добавление товара")
-async def new_item(
-    # item_data: Item | ItemAddWithNewStock, user: Annotated[User, Depends(user_powered)]
-    item_data: ItemAddWithNewStock,
-    user: Annotated[User, Depends(user_powered)],
-):
+async def new_item(item_data: ItemType, user: Annotated[User, Depends(user_powered)]):
 
     # item = await ItemDAO.add_one(item.model_dump(exclude_unset=True))
 
-    print(item_data)
+    # print(item_data)
+    # print(type(item_data))
+    # print(item_data.model_dump())
+    # TODO: Разделить входные данные на два словаря если поле type получено как new. Один словарь для доавления нового склада и второй для добавления продукта
+    if item_data.type == "new":
+        stock_data = item_data.new_stock
 
+    print(stock_data)
     return item_data
 
 

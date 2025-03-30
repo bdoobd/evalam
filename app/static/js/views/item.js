@@ -44,18 +44,16 @@ class Item {
         e.preventDefault();
         const fieldset = document.getElementById("stock-select");
         const form = e.target;
-        this._stockType = form.elements["stock-ref"]?.value;
 
-        if (form.elements["submit-item"]) {
-          const action = form.elements["submit-item"].value;
+        if (form.elements["type"]) {
           const formData = new FormData(form);
           let data = Object.fromEntries(formData.entries());
 
-          if (action == "new") {
+          if (this._stockType == "new") {
             data = fixFormDataToAddItem(data);
           }
 
-          console.log(JSON.stringify(data));
+          // console.log(JSON.stringify(data));
 
           const response = await fetch("/item/new", {
             method: "POST",
@@ -69,10 +67,11 @@ class Item {
         }
 
         if (form.elements["stock-ref-select"]) {
-          fieldset.innerHTML = "";
           const stockList = await getOpenRefs();
           const catList = await this.createCatSelectOptions();
+          this._stockType = form.elements["stock-ref"]?.value;
 
+          fieldset.innerHTML = "";
           fieldset.innerHTML = this._itemFieldsMarkup(stockList, catList);
         }
       });
@@ -141,13 +140,13 @@ class Item {
         <label for="note" class="form-label">Note</label>
         <textarea class="form-control" id="note" rows="3" name="note"></textarea>
       </div>
-      <input type="hidden" name="submit-item" value="${this._stockType}">
+      <input type="hidden" name="type" value="${this._stockType}">
     `;
   }
 
   _newStockMarkup() {
     return `
-    <fieldset>
+    <fieldset name="new_stock">
       <div class="mb-3">
         <label for="reference" class="form-label">New stock</label>
         <input type="text" class="form-control" id="reference" name="reference" value="">
@@ -164,7 +163,7 @@ class Item {
   }
 
   _existingStockMarkup(stockData) {
-    let stockField = `<div class="mb-3"><select class="form-select" id="reference" name="reference">`;
+    let stockField = `<div class="mb-3"><select class="form-select" id="stock_id" name="stock_id">`;
     stockData.forEach((stock) => {
       stockField += `
           <option value="${stock.id}">${stock.reference}</option>`;

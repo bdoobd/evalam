@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel, Field, ConfigDict
 
 from app.schemas.stock import StockAdd
@@ -19,16 +21,27 @@ class ItemWithID(Item):
     id: int
 
 
-class ItemAddWithNewStock(BaseModel):
+# Тестирование множественной аннотации типов
+class ItemAddBase(BaseModel):
+    type: Literal["base"]
     lot: str = Field(..., title="Item lot number", min_length=5)
     pallet: str = Field(..., title="Item pallet number", min_length=3)
     roll: str = Field(..., title="Item roll number", min_length=4)
     note: str | None = Field(None, title="Item note", max_length=200)
     cat_id: int = Field(..., title="Category ID", ge=1)
     load_id: int | None = Field(None, title="Load ID")
-    new_stock: StockAdd
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ItemAdd(ItemAddBase):
+    type: Literal["exist"]
+    stock_id: int = Field(..., title="Stock ID", ge=1)
+
+
+class ItemAddWithNewStock(ItemAddBase):
+    type: Literal["new"]
+    new_stock: StockAdd
 
 
 class FilterItems(BaseModel):
