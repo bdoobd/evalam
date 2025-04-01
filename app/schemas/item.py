@@ -10,7 +10,7 @@ class Item(BaseModel):
     pallet: str = Field(..., title="Item pallet number", min_length=4)
     roll: str = Field(..., title="Item roll number", min_length=4)
     note: str | None = Field(None, title="Item note", max_length=200)
-    stock_id: int = Field(..., title="Stock ID", ge=1)
+    stock_id: int | None = Field(None, title="Stock ID", ge=1)
     cat_id: int = Field(..., title="Category ID", ge=1)
     load_id: int | None = Field(None, title="Load ID")
 

@@ -53,7 +53,7 @@ class Item {
             data = fixFormDataToAddItem(data);
           }
 
-          // console.log(JSON.stringify(data));
+          console.log(JSON.stringify(data));
 
           const response = await fetch("/item/new", {
             method: "POST",

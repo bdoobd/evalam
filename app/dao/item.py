@@ -1,78 +1,82 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
-from pydantic import BaseModel
+
+# from pydantic import BaseModel
 
 from app.dao.base import BaseDAO
 from app.dao.session_maker import connection
+
 from app.models.item import Item
-from app.models.stock import Stock
+
+# from app.models.stock import Stock
+from app.schemas.item import Item as ItemData, ItemWithID
 
 
 class ItemDAO(BaseDAO[Item]):
     model = Item
 
     @connection
-    async def add_one(item_data: dict, session: AsyncSession):
+    async def add_one(item_data: ItemData, session: AsyncSession) -> ItemWithID:
 
-        new_item = await ItemDAO.add(session=session, **item_data)
+        new_item = await ItemDAO.add(session=session, values=item_data)
 
-        return new_item.to_dict()
+        return new_item
 
-    @classmethod
-    @connection
-    async def add_stock_and_item(
-        cls, stock_data: dict, item_data: dict, session: AsyncSession
-    ):
+    # @classmethod
+    # @connection
+    # async def add_stock_and_item(
+    #     cls, stock_data: dict, item_data: dict, session: AsyncSession
+    # ):
 
-        new_stock = Stock(**stock_data)
+    #     new_stock = Stock(**stock_data)
 
-        session.add(new_stock)
-        await session.flush()
+    #     session.add(new_stock)
+    #     await session.flush()
 
-        item = cls.model(**item_data, stock_id=new_stock.id)
+    #     item = cls.model(**item_data, stock_id=new_stock.id)
 
-        session.add(item)
+    #     session.add(item)
 
-        await session.commit()
+    #     await session.commit()
 
-        return new_stock.id
+    #     return new_stock.id
 
-    @connection
-    async def add_many_items(items_data: list[dict], session: AsyncSession):
+    # @connection
+    # async def add_many_items(items_data: list[dict], session: AsyncSession):
 
-        new_items = await ItemDAO.add_many(session=session, instances=items_data)
+    #     new_items = await ItemDAO.add_many(session=session, instances=items_data)
 
-        print(f"New items added: {[item.id for item in new_items]}")
+    #     print(f"New items added: {[item.id for item in new_items]}")
 
-        return [item.id for item in new_items]
+    #     return [item.id for item in new_items]
 
-    @connection
-    async def get_items(session: AsyncSession, filter: dict):
+    # @connection
+    # async def get_items(session: AsyncSession, filter: dict):
 
-        items = await ItemDAO.find_all(session=session, **filter)
+    #     items = await ItemDAO.find_all(session=session, **filter)
 
-        return items
+    #     return items
 
-    @connection
-    async def get_item_full_info(session: AsyncSession, item_id: int):
+    # @connection
+    # async def get_item_full_info(session: AsyncSession, item_id: int):
 
-        item = await ItemDAO.get_item_info(session=session, id=item_id)
+    #     item = await ItemDAO.get_item_info(session=session, id=item_id)
 
-        return item
+    #     return item
 
-    # ================================================================================
-    # ================================================================================
-    @classmethod
-    async def get_item_info(cls, session: AsyncSession, id: int):
-        query = (
-            select(cls.model)
-            .options(joinedload(cls.model.stock))
-            .options(joinedload(cls.model.cat))
-            .where(cls.model.id == id)
-        )
+    # # ================================================================================
+    # # ================================================================================
+    # @classmethod
+    # async def get_item_info(cls, session: AsyncSession, id: int):
+    #     query = (
+    #         select(cls.model)
+    #         .options(joinedload(cls.model.stock))
+    #         .options(joinedload(cls.model.cat))
+    #         .where(cls.model.id == id)
+    #     )
 
-        result = await session.execute(query)
-        records = result.unique().scalars().all()
+    #     result = await session.execute(query)
+    #     records = result.unique().scalars().all()
 
-        return records
+    #     return records
