@@ -43,7 +43,8 @@ async def new_item(
 # async def find_items(filter: Annotated[FilterItems, Query()]) -> list[ItemWithID]:
 async def find_items(filter: Annotated[FilterItems, Query()]):
 
-    return await ItemDAO.get_items(filter=filter.model_dump(exclude_none=True))
+    # return await ItemDAO.get_items(filter=filter.model_dump(exclude_none=True))
+    return await ItemDAO.get_items(filter)
 
 
 @router.get("/item/{item_id}", summary="Получение полной информации по товару")

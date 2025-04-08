@@ -8,9 +8,10 @@ from app.dao.base import BaseDAO
 from app.dao.session_maker import connection
 
 from app.models.item import Item
+from app.models.stock import Stock
 
 # from app.models.stock import Stock
-from app.schemas.item import Item as ItemData, ItemWithID
+from app.schemas.item import Item as ItemData, ItemWithID, FilterItems
 
 
 class ItemDAO(BaseDAO[Item]):
@@ -22,6 +23,10 @@ class ItemDAO(BaseDAO[Item]):
         new_item = await ItemDAO.add(session=session, values=item_data)
 
         return new_item
+
+    @connection
+    async def get_items(filter: FilterItems, session: AsyncSession):
+        return await ItemDAO.get_full_item_info(filter=filter, session=session)
 
     # @classmethod
     # @connection
@@ -67,16 +72,36 @@ class ItemDAO(BaseDAO[Item]):
 
     # # ================================================================================
     # # ================================================================================
-    # @classmethod
-    # async def get_item_info(cls, session: AsyncSession, id: int):
-    #     query = (
-    #         select(cls.model)
-    #         .options(joinedload(cls.model.stock))
-    #         .options(joinedload(cls.model.cat))
-    #         .where(cls.model.id == id)
-    #     )
+    @classmethod
+    async def get_item_info(cls, session: AsyncSession, id: int):
+        query = (
+            select(cls.model)
+            .options(joinedload(cls.model.stock))
+            .options(joinedload(cls.model.cat))
+            .where(cls.model.id == id)
+        )
 
-    #     result = await session.execute(query)
-    #     records = result.unique().scalars().all()
+        result = await session.execute(query)
+        records = result.unique().scalars().all()
 
-    #     return records
+        return records
+
+    @classmethod
+    async def get_full_item_info(cls, filter, session: AsyncSession):
+
+        filter_result = filter.model_dump(exclude_unset=True)
+
+        query = (
+            select(cls.model)
+            .options(joinedload(cls.model.stock))
+            .options(joinedload(cls.model.cat))
+            .filter_by(**filter_result)
+        )
+
+        result = await session.execute(query)
+        records = result.unique().scalars().all()
+
+        return records
+        # print(type(filter_result))
+
+        # return {"filter": filter_result, "query": str(query)}
