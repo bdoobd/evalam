@@ -2,7 +2,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, ConfigDict
 
-from app.schemas.stock import StockAdd
+from app.schemas.stock import StockAdd, Stock
+from app.schemas.cat import Cat
 
 
 class Item(BaseModel):
@@ -53,5 +54,19 @@ class FilterItems(BaseModel):
     # cat_id: int | None = Field(None, title="Category ID", ge=1)
     # load_id: int | None = Field(None, title="Load ID")
     id: int | None = Field(None, title="Item ID", ge=1)
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+# ====================================================
+class ItemInStock(BaseModel):
+    id: int
+    lot: str
+    pallet: str
+    roll: str
+    note: str
+    stock: Stock
+    # cat: Cat
+    # load_id: int | None = Field(None, title="Load ID")
 
     model_config = ConfigDict(from_attributes=True)

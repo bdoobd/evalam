@@ -8,6 +8,7 @@ from app.schemas.user import User
 from app.routes.cat import all_cats
 from app.routes.user import all_users, get_roles
 from app.routes.stock import get_on_stock
+from app.routes.item import find_items
 
 router = APIRouter(prefix="", tags=["Frontend часть проекта"])
 templates = Jinja2Templates(directory="app/templates")
@@ -15,10 +16,16 @@ templates = Jinja2Templates(directory="app/templates")
 
 @router.get("/", summary="Project home page")
 async def index(
-    user: Annotated[User, Depends(get_current_active_user)], request: Request
+    request: Request,
+    items: Annotated[find_items, Depends()],
+    user: Annotated[User, Depends(get_current_active_user)],
 ):
+
+    print(items)
+
     return templates.TemplateResponse(
-        name="home.html", context={"request": request, "username": user.username}
+        name="home.html",
+        context={"request": request, "items": items, "username": user.username},
     )
 
 
