@@ -107,7 +107,18 @@ class ItemDAO(BaseDAO[Item]):
         # return {"filter": filter_result, "query": str(query)}
 
         # return [row.__dict__ for row in records]
+        # TODO: В классе модели SQLAlchemy написать метод для перевода модели в словарь. Второй метод можно создать для relationship моделей. Например:
+        #     class ParentModel(Base):
+        #         __tablename__ = 'parent'
 
+        #         id = Column(Integer, primary_key=True)
+        #         children = relationship('ChildModel', back_populates='parent')
+
+        #         def to_dict(self):
+        #             return {
+        #                 'id': self.id,
+        #                 'children': [child.to_dict() for child in self.children]
+        #             }
         return [
             ItemInStock(
                 id=record.id,
