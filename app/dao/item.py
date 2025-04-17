@@ -9,8 +9,8 @@ from app.dao.session_maker import connection
 
 from app.models.item import Item
 from app.models.stock import Stock
+from app.models.cat import Cat
 
-from app.models.stock import Stock as StockData
 from app.schemas.item import Item as ItemData, ItemWithID, FilterItems, ItemInStock
 
 
@@ -28,7 +28,9 @@ class ItemDAO(BaseDAO[Item]):
     async def get_items(filter: FilterItems, session: AsyncSession):
         items = await ItemDAO.get_full_item_info(filter=filter, session=session)
 
-        return [item.model_dump() for item in items]
+        print(items)
+
+        return items
 
     # @classmethod
     # @connection
@@ -93,47 +95,12 @@ class ItemDAO(BaseDAO[Item]):
         filter_result = filter.model_dump(exclude_unset=True)
 
         query = (
-            select(cls.model)
-            .options(joinedload(cls.model.stock))
-            .options(joinedload(cls.model.cat))
-            .filter_by(**filter_result)
+            select(Item, Stock, Cat)
+            .join(Stock)
+            .join(Cat)
+            .where(Stock.ready == False)
+            .order_by(Stock.date)
         )
-        result = await session.execute(query)
-        records = result.scalars().all()
+        results = await session.execute(query).scalars().all()
 
-        # return records
-        # print(type(filter_result))
-
-        # return {"filter": filter_result, "query": str(query)}
-
-        # return [row.__dict__ for row in records]
-        # TODO: В классе модели SQLAlchemy написать метод для перевода модели в словарь. Второй метод можно создать для relationship моделей. Например:
-        #     class ParentModel(Base):
-        #         __tablename__ = 'parent'
-
-        #         id = Column(Integer, primary_key=True)
-        #         children = relationship('ChildModel', back_populates='parent')
-
-        #         def to_dict(self):
-        #             return {
-        #                 'id': self.id,
-        #                 'children': [child.to_dict() for child in self.children]
-        #             }
-        return [
-            ItemInStock(
-                id=record.id,
-                lot=record.lot,
-                pallet=record.pallet,
-                roll=record.roll,
-                note=record.note,
-                stock=StockData(
-                    reference=record.stock.reference,
-                    date=record.stock.date,
-                    consignor=record.stock.consignor,
-                    ready=record.stock.ready,
-                    note=record.stock.note,
-                ),
-                # cat=record.cat_id,
-            )
-            for record in records
-        ]
+        return [ItemInStock.model_validate(item) for item in results]

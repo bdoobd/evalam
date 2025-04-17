@@ -64,9 +64,9 @@ class ItemInStock(BaseModel):
     lot: str
     pallet: str
     roll: str
-    note: str
+    note: str | None
     stock: Stock
-    # cat: Cat
+    cat: Cat
     # load_id: int | None = Field(None, title="Load ID")
 
     model_config = ConfigDict(from_attributes=True)

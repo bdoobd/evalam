@@ -4,8 +4,8 @@ from app.dao.db_base import Base, str_req, str_req_uq, str_opt
 
 
 class Cat(Base):
-    name: Mapped[str_opt]
-    cat: Mapped[str_opt]
+    name: Mapped[str_req]
+    cat: Mapped[str_req]
     width: Mapped[int] = mapped_column(unique=True)
     weight: Mapped[float]
     note: Mapped[str]
