@@ -7,7 +7,7 @@ from app.schemas.item import (
     ItemWithID,
     FilterItems,
     ItemAdd,
-    ItemAddBase,
+    ItemInStock,
     ItemAddWithNewStock,
 )
 from app.schemas.stock import StockAdd
@@ -41,7 +41,10 @@ async def new_item(
 
 @router.get("/items", summary="Получение данных по продукту с фильтром")
 # async def find_items(filter: Annotated[FilterItems, Query()]) -> list[ItemWithID]:
-async def find_items(filter: Annotated[FilterItems, Query()]):
+async def find_items(
+    filter: Annotated[FilterItems, Query()],
+    user: Annotated[User, Depends(get_current_active_user)],
+) -> list[ItemInStock]:
 
     # return await ItemDAO.get_items(filter=filter.model_dump(exclude_none=True))
     items = await ItemDAO.get_items(filter)
@@ -74,3 +77,13 @@ async def get_item(item_id: int):
 #     item = await ItemDAO.add_stock_and_item(stock.model_dump(), item.model_dump())
 
 #     return {"message": "Item and stock added", "Added ID": item}
+
+
+# @router.get("/onstock", summary="Get items in stock")
+# async def get_items_on_stock(
+#     filter: Annotated[FilterItems, Query()],
+#     user: Annotated[User, Depends(get_current_active_user)],
+# ) -> list[ItemInStock]:
+#     items = await ItemDAO.get_on_stock(filter=filter)
+
+#     return items

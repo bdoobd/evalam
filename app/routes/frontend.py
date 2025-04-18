@@ -14,15 +14,12 @@ router = APIRouter(prefix="", tags=["Frontend часть проекта"])
 templates = Jinja2Templates(directory="app/templates")
 
 
-@router.get("/", summary="Project home page")
+@router.get("/", summary="Items on stock")
 async def index(
     request: Request,
     items: Annotated[find_items, Depends()],
     user: Annotated[User, Depends(get_current_active_user)],
 ):
-
-    print(items)
-
     return templates.TemplateResponse(
         name="home.html",
         context={"request": request, "items": items, "username": user.username},

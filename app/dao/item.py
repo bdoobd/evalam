@@ -25,14 +25,23 @@ class ItemDAO(BaseDAO[Item]):
         return new_item
 
     @connection
-    async def get_items(filter: FilterItems, session: AsyncSession):
-        items = await ItemDAO.get_full_item_info(filter=filter, session=session)
+    async def get_items(filter: FilterItems, session: AsyncSession) -> ItemInStock:
+        filter_dict = filter.model_dump(exclude_unset=True)
+        query = (
+            select(Item)
+            .options(joinedload(Item.stock), joinedload(Item.cat))
+            .filter_by(**filter_dict)
+            .join(Stock)
+            .join(Cat)
+            .order_by(Stock.date)
+            .where(Stock.ready == False)
+        )
 
-        print(items)
+        result = await session.execute(query)
+        results = result.scalars().all()
 
-        return items
+        return [ItemInStock.model_validate(item) for item in results]
 
-    # @classmethod
     # @connection
     # async def add_stock_and_item(
     #     cls, stock_data: dict, item_data: dict, session: AsyncSession
@@ -89,18 +98,3 @@ class ItemDAO(BaseDAO[Item]):
         records = result.unique().scalars().all()
 
         return records
-
-    @classmethod
-    async def get_full_item_info(cls, filter, session: AsyncSession):
-        filter_result = filter.model_dump(exclude_unset=True)
-
-        query = (
-            select(Item, Stock, Cat)
-            .join(Stock)
-            .join(Cat)
-            .where(Stock.ready == False)
-            .order_by(Stock.date)
-        )
-        results = await session.execute(query).scalars().all()
-
-        return [ItemInStock.model_validate(item) for item in results]

@@ -9,6 +9,8 @@
     <tr>
       <th scope="col">Stock</th>
       <th scope="col">Date</th>
+      <th scope="col">Type</th>
+      <th scope="col">Name</th>
       <th scope="col">Width</th>
       <th scope="col">Pallet</th>
       <th scope="col">Lot</th>
@@ -21,7 +23,9 @@
     <tr>
       <th scope="row">{{ item.stock.reference }}</th>
       <td>{{ item.stock.date }}</td>
-      <td>1300</td>
+      <td>{{ item.cat.cat}}</td>
+      <td>{{ item.cat.name }}</td>
+      <td>{{ item.cat.width }}</td>
       <td>{{ item.pallet }}</td>
       <td>{{ item.lot }}</td>
       <td>{{ item.roll }}</td>
