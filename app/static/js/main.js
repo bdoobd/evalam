@@ -1,3 +1,4 @@
+import Home from './views/home.js'
 import Item from "./views/item.js";
 import Stock from "./views/stock.js";
 
@@ -7,6 +8,10 @@ const controlAddItem = async function () {
   Item.render();
 };
 
+const controllerHome = async function () {
+  Home.render()
+}
+
 // const handlerTmp = async function (element) {
 //   // console.log(`Selected element: ${element}`);
 
@@ -14,6 +19,7 @@ const controlAddItem = async function () {
 // };
 
 const init = function () {
+  Home.addHandlerHome(controllerHome);
   Item.addHandlerAddNew(controlAddItem);
   Stock.addHandlerModalWindow();
 };
