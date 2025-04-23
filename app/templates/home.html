@@ -22,7 +22,7 @@
     {% for item in items %}
     <tr>
       <th scope="row">{{ item.stock.reference }}</th>
-      <td>{{ item.stock.date }}</td>
+      <td data-datetime>{{ item.stock.date }}</td>
       <td>{{ item.cat.cat }}</td>
       <td>{{ item.cat.name }}</td>
       <td>{{ item.cat.width }}</td>

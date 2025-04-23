@@ -16,6 +16,7 @@ from app.dao.item import ItemDAO
 # from app.schemas.stock import StockAdd
 from app.schemas.user import User
 from app.dependencies import user_powered, get_current_active_user
+from app.helpers.format_datetime import format_date
 
 router = APIRouter(prefix="/item", tags=["Работа с товарами"])
 ItemType = Union[ItemAddWithNewStock, ItemAdd]
@@ -25,7 +26,7 @@ ItemType = Union[ItemAddWithNewStock, ItemAdd]
 async def new_item(
     item_data: ItemType, user: Annotated[User, Depends(user_powered)]
 ) -> ItemWithID:
-
+    breakpoint()
     if item_data.type == "new":
         stock_data = StockAdd(**item_data.new_stock.model_dump())
         item_data = Item(**item_data.model_dump(exclude_unset=True))
@@ -40,16 +41,15 @@ async def new_item(
 
 
 @router.get("/items", summary="Получение данных по продукту с фильтром")
-# async def find_items(filter: Annotated[FilterItems, Query()]) -> list[ItemWithID]:
 async def find_items(
     filter: Annotated[FilterItems, Query()],
     user: Annotated[User, Depends(get_current_active_user)],
 ) -> list[ItemInStock]:
 
-    # return await ItemDAO.get_items(filter=filter.model_dump(exclude_none=True))
     items = await ItemDAO.get_items(filter)
+    formated_items = [format_date(item) for item in items]
 
-    return items
+    return formated_items
 
 
 @router.get("/item/{item_id}", summary="Получение полной информации по товару")

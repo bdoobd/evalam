@@ -33,7 +33,7 @@ class ItemDAO(BaseDAO[Item]):
             .filter_by(**filter_dict)
             .join(Stock)
             .join(Cat)
-            .order_by(Stock.date)
+            .order_by(Stock.date.desc())
             .where(Stock.ready == False)
         )
 

@@ -25,9 +25,9 @@ class ItemWithID(Item):
 # Тестирование множественной аннотации типов
 class ItemAddBase(BaseModel):
     type: Literal["base"]
-    lot: str = Field(..., title="Item lot number", min_length=5)
-    pallet: str = Field(..., title="Item pallet number", min_length=3)
-    roll: str = Field(..., title="Item roll number", min_length=4)
+    lot: str = Field(default='Untagged', title="Item lot number", min_length=5)
+    pallet: str = Field(default='Untagged', title="Item pallet number", min_length=3)
+    roll: str = Field(None, title="Item roll number", min_length=4)
     note: str | None = Field(None, title="Item note", max_length=200)
     cat_id: int = Field(..., title="Category ID", ge=1)
     load_id: int | None = Field(None, title="Load ID")

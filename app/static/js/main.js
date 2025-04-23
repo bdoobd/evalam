@@ -19,7 +19,7 @@ const controllerHome = async function () {
 // };
 
 const init = function () {
-  Home.addHandlerHome(controllerHome);
+  // Home.addHandlerHome(controllerHome);
   Item.addHandlerAddNew(controlAddItem);
   Stock.addHandlerModalWindow();
 };
