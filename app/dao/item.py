@@ -12,17 +12,30 @@ from app.models.stock import Stock
 from app.models.cat import Cat
 
 from app.schemas.item import Item as ItemData, ItemWithID, FilterItems, ItemInStock
+from app.schemas.stock import StockAdd
 
 
 class ItemDAO(BaseDAO[Item]):
     model = Item
 
     @connection
-    async def add_one(item_data: ItemData, session: AsyncSession) -> ItemWithID:
-
+    async def add_one(item_data: ItemData, session: AsyncSession) -> ItemData:
         new_item = await ItemDAO.add(session=session, values=item_data)
 
         return new_item
+
+    @connection
+    async def add_item_stock(stock_data: StockAdd, item_data: ItemData, session: AsyncSession) -> ItemData:
+        stock = Stock(**stock_data.model_dump())
+        session.add(stock)
+        await session.flush()
+        
+        item = Item(**item_data.model_dump())
+        item.stock_id = stock.id
+        session.add(item)
+        await session.commit()
+
+        return item
 
     @connection
     async def get_items(filter: FilterItems, session: AsyncSession) -> ItemInStock:

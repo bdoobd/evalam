@@ -1,8 +1,8 @@
-"""Updated items table
+"""Recreate item table
 
-Revision ID: 30a347116214
-Revises: 81833d23696f
-Create Date: 2025-02-19 21:41:17.124458
+Revision ID: 6fdeba20c65d
+Revises: 3a12da9cbfc6
+Create Date: 2025-05-16 19:48:56.768893
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '30a347116214'
-down_revision: Union[str, None] = '81833d23696f'
+revision: str = '6fdeba20c65d'
+down_revision: Union[str, None] = '3a12da9cbfc6'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -24,16 +24,16 @@ def upgrade() -> None:
     sa.Column('stock_id', sa.Integer(), nullable=False),
     sa.Column('load_id', sa.Integer(), nullable=True),
     sa.Column('cat_id', sa.Integer(), nullable=False),
-    sa.Column('lot', sa.String(), nullable=False),
-    sa.Column('pallet', sa.String(), nullable=False),
-    sa.Column('roll', sa.String(), nullable=False),
+    sa.Column('lot', sa.String(), nullable=True),
+    sa.Column('pallet', sa.String(), nullable=True),
+    sa.Column('roll', sa.String(), nullable=True),
+    sa.Column('qty', sa.Integer(), nullable=False),
     sa.Column('note', sa.String(), nullable=True),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.ForeignKeyConstraint(['cat_id'], ['cats.id'], ),
     sa.ForeignKeyConstraint(['load_id'], ['loads.id'], ),
     sa.ForeignKeyConstraint(['stock_id'], ['stocks.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('roll')
+    sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
 

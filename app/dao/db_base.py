@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_
 from app.config import settings
 
 DB_URL = settings.get_db_url()
-engine = create_async_engine(url=DB_URL, echo=True)
+engine = create_async_engine(url=DB_URL, echo=False)
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
 str_req = Annotated[str, mapped_column(nullable=False)]

@@ -55,25 +55,41 @@ class Item {
 
           console.log(JSON.stringify(data));
 
-          const response = await fetch("/item/new", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          });
+          try {
+            const response = await fetch("/item/new", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+             },
+              body: JSON.stringify(data),
+            });
 
-          console.log(response);
+            console.log(response);
+            
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.detail)
+            }
+
+            const result = await response.json();
+            form.reset();
+            this._parentElement.innerHTML = "";
+            window.location.href = "/";
+          } catch (error) {
+            console.error("Error:", error);
+          }
         }
 
+        
         if (form.elements["stock-ref-select"]) {
           const stockList = await getOpenRefs();
           const catList = await this.createCatSelectOptions();
           this._stockType = form.elements["stock-ref"]?.value;
-
+          
           fieldset.innerHTML = "";
           fieldset.innerHTML = this._itemFieldsMarkup(stockList, catList);
         }
+        // return result;
       });
   }
 
@@ -119,7 +135,7 @@ class Item {
     return `
         ${stockField}
       <div class="mb-3">
-        <label for="cat" class="form-label">Item category</label>
+        <label for="cat_id" class="form-label">Item category</label>
         <select class="form-select" id="cat_id" name="cat_id">
           ${catOptions} 
         </select>
@@ -135,6 +151,10 @@ class Item {
       <div class="mb-3">
         <label for="roll" class="form-label">Roll number</label>
         <input type="text" class="form-control" id="roll" name="roll" value="">
+      </div>
+      <div class="mb-3">
+        <label for="qty" class="form-label">Quantity</label>
+        <input type="text" class="form-control" id="qty" name="qty" value="">
       </div>
       <div class="mb-3">
         <label for="note" class="form-label">Note</label>
@@ -163,7 +183,7 @@ class Item {
   }
 
   _existingStockMarkup(stockData) {
-    let stockField = `<div class="mb-3"><select class="form-select" id="stock_id" name="stock_id">`;
+    let stockField = `<div class="mb-3"><label for="stock_id" class="form-label">Stock Ref</label><select class="form-select" id="stock_id" name="stock_id">`;
     stockData.forEach((stock) => {
       stockField += `
           <option value="${stock.id}">${stock.reference}</option>`;

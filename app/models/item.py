@@ -11,9 +11,10 @@ class Item(Base):
     stock_id: Mapped[int] = mapped_column(ForeignKey("stocks.id"))
     load_id: Mapped[int | None] = mapped_column(ForeignKey("loads.id"))
     cat_id: Mapped[int] = mapped_column(ForeignKey("cats.id"), nullable=False)
-    lot: Mapped[str_req] = mapped_column(default='Untagged')
-    pallet: Mapped[str_req] = mapped_column(default='Untagged')
-    roll: Mapped[str_opt] = mapped_column(unique=True)
+    lot: Mapped[str | None]
+    pallet: Mapped[str | None]
+    roll: Mapped[str | None]
+    qty: Mapped[int] = mapped_column(default=1)
     note: Mapped[str | None]
 
     stock: Mapped["Stock"] = relationship("Stock", back_populates="items")

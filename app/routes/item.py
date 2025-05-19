@@ -25,19 +25,17 @@ ItemType = Union[ItemAddWithNewStock, ItemAdd]
 @router.post("/new", summary="Добавление товара")
 async def new_item(
     item_data: ItemType, user: Annotated[User, Depends(user_powered)]
-) -> ItemWithID:
-    breakpoint()
+) -> Item:
     if item_data.type == "new":
-        stock_data = StockAdd(**item_data.new_stock.model_dump())
-        item_data = Item(**item_data.model_dump(exclude_unset=True))
+        stock_obj = StockAdd(**item_data.new_stock.model_dump())
+        item_obj = Item(**item_data.model_dump(exclude_unset=True))
+        result = await ItemDAO.add_item_stock(stock_obj, item_obj)
 
     if item_data.type == "exist":
-        item_data = Item(**item_data.model_dump(exclude_unset=True))
-        result = await ItemDAO.add_one(item_data)
+        item_obj = Item(**item_data.model_dump(exclude_unset=True))
+        result = await ItemDAO.add_one(item_obj)
 
-    print(result)
-
-    return item_data
+    return result
 
 
 @router.get("/items", summary="Получение данных по продукту с фильтром")
